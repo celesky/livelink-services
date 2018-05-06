@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html" />
+    <meta name="author" content="https://www.baidu.com" />
+    <title>websocket test</title>
+    <script>
+        var socket;
+        function Connect(){
+            var host = document.getElementById("host").value;
+            try{
+                socket=new WebSocket(host);
+            }catch(e){
+                var txt =  document.getElementById("chathis").innerHTML;
+                document.getElementById("chathis").innerHTML =txt+'<br>'+'error!';
+                return;
+            }
+            socket.onopen = sOpen;
+            socket.onerror = sError;
+            socket.onmessage= sMessage;
+            socket.onclose= sClose;
+        }
+        function sOpen(){
+            var txt =  document.getElementById("chathis").innerHTML;
+            document.getElementById("chathis").innerHTML =txt+'<br>'+'connect success!'
+        }
+        function sError(e){
+            alert("error " + e);
+        }
+        function sMessage(msg){
+            //alert('server says:' + bean);
+            var txt =  document.getElementById("chathis").innerHTML;
+            document.getElementById("chathis").innerHTML =txt+'<br>'+msg.data;
+
+        }
+        function sClose(e){
+            var txt =  document.getElementById("chathis").innerHTML;
+            document.getElementById("chathis").innerHTML =txt+'<br>'+"connect closed:" + e.code;
+        }
+        function Send(){
+            socket.send(document.getElementById("msg").value);
+        }
+        function Close(){
+            socket.close();
+        }
+    </script>
+</head>
+
+<body>
+<input id="host" type="text" value="ws://127.0.0.1:8080/ws" style="width: 300px"><button id="connect" onclick="Connect();">Connect</button><br/><br/><br/>
+<input id="msg" type="text"  value="" style="width: 300px">
+
+<button id="send" onclick="Send();">Send</button>
+<button id="close" onclick="Close();">Close</button>
+<div id="chathis">
+
+</div>
+</body>
+
+</html>  
