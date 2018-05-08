@@ -48,7 +48,7 @@ public class ConnectionManager {
      * 清理资源
      */
     public static void addConnection(Integer userId,ChannelHandlerContext ctx){
-        //给ctx加上userId属性 每个合法的用户连接都有userId属性
+        //给ctx绑定userId属性 每个合法的用户连接都有userId属性
         ctx.channel().attr(AK_USER_ID).set(userId);
         if(ctxMap.contains(userId)){
             //如果原来有ctx对象,关闭之
@@ -66,6 +66,7 @@ public class ConnectionManager {
      * 断开后从ctxMap中remove
      */
     public static void closeConnection(ChannelHandlerContext ctx){
+        //如果连接还存活,先关闭之
         if(ctx.channel().isOpen()||ctx.channel().isActive()){
             ctx.close().addListener(new ChannelFutureListener() {
                 @Override
@@ -74,6 +75,8 @@ public class ConnectionManager {
                 }
             });
             ctx.close();
+        }else{
+            removeFrmCtxMap(ctx);
         }
     }
 
@@ -99,6 +102,10 @@ public class ConnectionManager {
 
     }
 
+    public static Integer getUserIdInCtx(ChannelHandlerContext ctx){
+        Integer userId = ctx.channel().attr(AK_USER_ID).get();
+        return userId;
+    }
 
 
 }

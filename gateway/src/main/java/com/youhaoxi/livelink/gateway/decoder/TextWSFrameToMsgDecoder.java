@@ -1,7 +1,7 @@
 package com.youhaoxi.livelink.gateway.decoder;
 
 import com.alibaba.fastjson.JSONObject;
-import com.youhaoxi.livelink.gateway.bean.msg.UserMsg;
+import com.youhaoxi.livelink.gateway.im.msg.Msg;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -20,7 +20,7 @@ public class TextWSFrameToMsgDecoder extends MessageToMessageDecoder<TextWebSock
     @Override
     protected void decode(ChannelHandlerContext ctx, TextWebSocketFrame msg, List<Object> out) throws Exception {
         logger.debug(msg.text());
-        UserMsg userMsg = JSONObject.parseObject(msg.text(), UserMsg.class);
+        Msg userMsg = JSONObject.parseObject(msg.text(), Msg.class);
         out.add(userMsg);
     }
 }

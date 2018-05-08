@@ -8,12 +8,23 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * 用户的连接情况 redis数据结构: HASH
+ * USERID_RELATION_HASH#111
+ *      LINKHOST:172.168.0.1
+ *      ROOMID:room101
+ *
+ * 聊天室成员 redis数据结构 ZSET
+ *  ROOMID_USERID_RALATION_HASH#room101
+ *      userId1
+ *      userId2...
+ *
+ *
  * 聊天室管理
  */
 public class ChatRoomRedisManager {
     private static final int CACHE_EXPIRE_HOUR_6 = 6*60*60;
     /*
-     userId:HOST-->hostString
+     userId:LINKHOST-->hostString
      userId:ROOMID-->roomIdString
      */
     private static final String USERID_RELATION_HASH_KEY = "USERID_RELATION_HASH#%s";
@@ -22,9 +33,6 @@ public class ChatRoomRedisManager {
 
     //roomId->userId  zset排序存储  按加入房间的顺序
     private static final String ROOMID_USERID_RALATION_ZSET_KEY="ROOMID_USERID_RALATION_HASH#%s";
-
-    //userId->host 地址 string 存储
-    //private static final String USERID_HOST_RELATION_KEY ="USERID_HOST_RELATION#%s";
 
     private static final String HOST = NetUtils.getLocalAddress().getHostAddress();
     /**
@@ -63,9 +71,8 @@ public class ChatRoomRedisManager {
     /**
      * 给userId删除roomId映射
      * @param userId
-     * @param roomId
      */
-    private static void removeUserIdRoomIdRelation(Integer userId,String roomId){
+    private static void removeUserIdRoomIdRelation(Integer userId){
         String key = String.format(USERID_RELATION_HASH_KEY,userId);
         //RedisUtil.cache().hset(key,UserRelationField.ROOMID,roomId);
         RedisUtil.cache().hdel(key,UserRelationField.ROOMID);
@@ -82,8 +89,10 @@ public class ChatRoomRedisManager {
     }
 
     public static void removeUserFromRoom(Integer userId,String roomId){
+        //群成员删除
         removeRoomIdMembers(roomId,userId);
-        removeUserFromRoom(userId,roomId);
+        //用户id -->群id 关系删除
+        removeUserIdRoomIdRelation(userId);
     }
 
     /**
@@ -102,7 +111,7 @@ public class ChatRoomRedisManager {
      */
     public static void setUserIdHostRelation(Integer userId){
         String key = String.format(USERID_RELATION_HASH_KEY,userId);
-        RedisUtil.cache().hset(key,UserRelationField.HOST,HOST);
+        RedisUtil.cache().hset(key,UserRelationField.LINKHOST,HOST);
     }
 
     /**
@@ -111,7 +120,7 @@ public class ChatRoomRedisManager {
      */
     public static String getUserIdHostRelation(Integer userId){
         String key = String.format(USERID_RELATION_HASH_KEY,userId);
-        String host = RedisUtil.cache().hget(key,UserRelationField.HOST);
+        String host = RedisUtil.cache().hget(key,UserRelationField.LINKHOST);
         return host;
     }
 
@@ -122,14 +131,14 @@ public class ChatRoomRedisManager {
      */
     public static void removeUserIdHostRelation(Integer userId){
         String key = String.format(USERID_RELATION_HASH_KEY,userId);
-        RedisUtil.cache().hdel(key,UserRelationField.HOST);
+        RedisUtil.cache().hdel(key,UserRelationField.LINKHOST);
     }
 
     /**
      * redis中用户关系数据结构
      */
     static class UserRelationField{
-        static String HOST="HOST";
+        static String LINKHOST="LINKHOST";
         static String ROOMID="ROOMID";
     }
 

@@ -171,13 +171,13 @@ public final class StringUtils {
 //    }
 
 //    /**
-//     * @param bean
+//     * @param im
 //     * @param e
 //     * @return string
 //     */
-//    public static String toString(String bean, Throwable e) {
+//    public static String toString(String im, Throwable e) {
 //        UnsafeStringWriter w = new UnsafeStringWriter();
-//        w.write(bean + "\n");
+//        w.write(im + "\n");
 //        PrintWriter p = new PrintWriter(w);
 //        try {
 //            e.printStackTrace(p);
