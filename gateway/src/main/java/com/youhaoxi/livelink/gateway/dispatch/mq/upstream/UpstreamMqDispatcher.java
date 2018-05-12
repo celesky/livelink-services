@@ -3,7 +3,6 @@ package com.youhaoxi.livelink.gateway.dispatch.mq.upstream;
 import com.youhaoxi.livelink.gateway.dispatch.Dispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
 import com.youhaoxi.livelink.gateway.im.enums.BroadType;
-import com.youhaoxi.livelink.gateway.im.event.PlainUserMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.UserMsgEvent;
 import com.youhaoxi.livelink.gateway.im.msg.IMsg;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
@@ -15,8 +14,8 @@ import org.slf4j.LoggerFactory;
  * mq广播器 ,派发
  *
  */
-public class UserMsgMqDispatcher implements Dispatcher{
-    private static final Logger logger = LoggerFactory.getLogger(UserMsgMqDispatcher.class);
+public class UpstreamMqDispatcher implements Dispatcher{
+    private static final Logger logger = LoggerFactory.getLogger(UpstreamMqDispatcher.class);
 
     RabbitProducer producer = new RabbitProducer();
 
@@ -36,11 +35,10 @@ public class UserMsgMqDispatcher implements Dispatcher{
             //私聊消息
             //获取对方连接主机的host
             Integer receiverUserId = plainUserMsgEvent.getReceiverUserId();
-            String host = ChatRoomRedisManager.getUserIdHostRelation(receiverUserId);
+            String destHost = ChatRoomRedisManager.getUserIdHostRelation(receiverUserId);
             //发到host对应的mq
             logger.info(">>消息私聊:"+ plainUserMsgEvent.toString()+" 发送给了用户"+receiverUserId);
-            producer.publish(host,msg);
-
+            producer.publish(destHost,msg);
         }
     }
 }

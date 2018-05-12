@@ -35,4 +35,7 @@ public class RedisUtil {
         RedisUtil.cache().set("test","hello");
         System.out.println("args = " + RedisUtil.cache().get("test"));
     }
+
+
+
 }

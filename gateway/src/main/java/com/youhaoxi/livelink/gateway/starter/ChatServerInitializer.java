@@ -4,7 +4,7 @@ import com.youhaoxi.livelink.gateway.decoder.TextWSFrameToMsgDecoder;
 import com.youhaoxi.livelink.gateway.handler.AuthorizeHandler;
 import com.youhaoxi.livelink.gateway.handler.ConnectionHandler;
 import com.youhaoxi.livelink.gateway.handler.HeartbeatHandler;
-import com.youhaoxi.livelink.gateway.handler.ChatMsgHandler;
+import com.youhaoxi.livelink.gateway.handler.MsgHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -36,7 +36,7 @@ public class ChatServerInitializer extends ChannelInitializer<Channel> {
         pipeline.addLast(new ConnectionHandler());//连接管理
         pipeline.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS));//空闲练级额管理
         pipeline.addLast(new HeartbeatHandler());//心跳处理
-        pipeline.addLast(new ChatMsgHandler());//消息处理
+        pipeline.addLast(new MsgHandler());//消息处理
 
     }
 }

@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -16,6 +19,9 @@ public class RabbitConnectionManager {
     private static RabbitConnectionManager instance = new RabbitConnectionManager();
     private static ConnectionFactory factory = new ConnectionFactory();
     private static Connection connection;
+
+    private static List<Channel> channels = new ArrayList<>();
+
 
     private static ReentrantLock resLock = new ReentrantLock();
 
@@ -74,7 +80,6 @@ public class RabbitConnectionManager {
      * @return
      */
     public  Channel getNewChannel(){
-
         try{
             resLock.lock();
             if(connection==null||!connection.isOpen()){
@@ -86,17 +91,39 @@ public class RabbitConnectionManager {
                 //初始化连接
                 initConnection();
             }
+            Channel channel = null;
+            try {
+                channel = connection.createChannel();
+                channels.add(channel);//添加到channelList
+            } catch(Exception e){
+                logger.error(">>>RabbitConnectionManager getNewChannel Exception:"+e.getMessage(),e);
+            }
+            return channel;
         }finally {
             resLock.unlock();
         }
-
-        Channel channel = null;
-        try {
-            channel = connection.createChannel();
-        } catch(Exception e){
-            logger.error(">>>RabbitConnectionManager getNewChannel Exception:"+e.getMessage(),e);
-
-        }
-        return channel;
     }
+
+    public void closeConnection(){
+        try {
+            if(connection!=null){
+                connection.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeChannel(Channel channel){
+        try {
+            if(channel!=null){
+                channel.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

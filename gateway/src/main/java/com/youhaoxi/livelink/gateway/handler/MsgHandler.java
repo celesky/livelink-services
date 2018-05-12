@@ -1,11 +1,10 @@
 package com.youhaoxi.livelink.gateway.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.youhaoxi.livelink.gateway.im.event.*;
-import com.youhaoxi.livelink.gateway.im.event.JoinRoomEvent;
-import com.youhaoxi.livelink.gateway.im.event.PlainUserMsgEvent;
+import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
+import com.youhaoxi.livelink.gateway.im.handler.IMEventHandler;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
-import com.youhaoxi.livelink.gateway.util.ChatRoomRedisManager;
 import com.youhaoxi.livelink.gateway.util.ConnectionManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -17,8 +16,8 @@ import java.util.concurrent.*;
 /**
  * 聊天消息处理
  */
-public class ChatMsgHandler extends SimpleChannelInboundHandler<Msg> {
-    private static final Logger logger = LoggerFactory.getLogger(ChatMsgHandler.class);
+public class MsgHandler extends SimpleChannelInboundHandler<Msg> {
+    private static final Logger logger = LoggerFactory.getLogger(MsgHandler.class);
     private static final ExecutorService executorService = new ThreadPoolExecutor(8,
     16,
     60,
@@ -36,9 +35,12 @@ public class ChatMsgHandler extends SimpleChannelInboundHandler<Msg> {
         //ConnectionManager.channelGroup.writeAndFlush(new TextWebSocketFrame(jsonMsg));
         logger.debug(">>>聊天信息处理:"+JSONObject.toJSONString(msg));
         //聊天状态处理
+        //将消息交给Woker队列去处理
 
+        IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
+        Worker.dispatch(msg.user.userId, handler);
 
-
+        /**
         if(msg.getEvent() instanceof JoinRoomEvent){ //加入聊天室
             JoinRoomEvent event = (JoinRoomEvent)msg.getEvent();
             ChatRoomRedisManager.addUserToRoom(event.getUserId(),event.getRoomId());
@@ -56,6 +58,7 @@ public class ChatMsgHandler extends SimpleChannelInboundHandler<Msg> {
         }else {
             logger.error("未知消息类型:"+msg.toString());
         }
+         **/
 
 
     }

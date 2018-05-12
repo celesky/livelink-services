@@ -18,7 +18,7 @@ public class RabbitProducer {
 
     private static final String EXCHANGE_NAME = Constants.EXCHANGE_NAME;
 
-    private static Channel channel = RabbitConnectionManager.getInstance().getNewChannel();
+    private Channel channel = RabbitConnectionManager.getInstance().getNewChannel();
 
     public RabbitProducer(){
         try {
@@ -32,6 +32,14 @@ public class RabbitProducer {
         try {
             String json = JSON.toJSONString(msg);
             channel.basicPublish(EXCHANGE_NAME, routeKey, null, json.getBytes("UTF-8"));
+        } catch (IOException e) {
+            logger.error("publish error:"+e.getMessage(),e);
+        }
+    }
+    public  void publish(String routeKey,String msg){
+        try {
+            //String json = JSON.toJSONString(msg);
+            channel.basicPublish(EXCHANGE_NAME, routeKey, null, msg.getBytes("UTF-8"));
         } catch (IOException e) {
             logger.error("publish error:"+e.getMessage(),e);
         }

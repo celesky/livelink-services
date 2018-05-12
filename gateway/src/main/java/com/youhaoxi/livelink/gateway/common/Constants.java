@@ -10,4 +10,9 @@ public class Constants {
     //redis
     public final static String REDIS = "47.106.140.44:5354";
 
+
+    //dispatch worker num
+    public final static int workerNum =4;
+
+
 }

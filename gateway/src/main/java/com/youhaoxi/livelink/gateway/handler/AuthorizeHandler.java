@@ -1,9 +1,12 @@
 package com.youhaoxi.livelink.gateway.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.im.ResultBean;
 import com.youhaoxi.livelink.gateway.im.enums.EventType;
 import com.youhaoxi.livelink.gateway.im.event.*;
+import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
+import com.youhaoxi.livelink.gateway.im.handler.IMEventHandler;
 import com.youhaoxi.livelink.gateway.im.msg.Header;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
 import com.youhaoxi.livelink.gateway.im.msg.User;
@@ -31,13 +34,13 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
      * 收到消息事件
      */
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        Msg userMsg = (Msg)msg;
+    public void channelRead(ChannelHandlerContext ctx, Object m) throws Exception {
+        Msg msg = (Msg)m;
 
         //ConnectionManager.channelGroup.writeAndFlush(im.retain());
-        logger.debug("userMsg = " + userMsg.toString());
+        logger.debug("userMsg = " + msg.toString());
         //参数检查
-        ResultBean resultBean = paramCheck(userMsg);
+        ResultBean resultBean = paramCheck(msg);
         if(resultBean.getCode()!=0) {
             ReferenceCountUtil.release(msg);
             String resultJson = JSON.toJSONString(resultBean);
@@ -53,12 +56,9 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
             });
         }
         //登录事件  鉴权
-        if(userMsg.getEvent() instanceof LoginEvent) {
-            boolean result = authorize(userMsg,ctx);
-            //认证通过,传递给下一个ConnectionHandler
-            if(result){
-                ctx.fireChannelRead(msg);
-            }
+        if(msg.event instanceof LoginEvent) {
+            IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
+            Worker.dispatch(msg.user.userId, handler);
         }else{
             //session检查
             boolean result = checkSession(ctx);
@@ -88,20 +88,23 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
             //登录消息 map转成对应实体
             IMsgEvent msgEvent=null;
             String evenjson = JSON.toJSONString(eventMap);
+            msgEvent = EventJsonParserManager.parseJsonToEvent(header.eventType.getValue(),evenjson);
 
-            if(header.getEventType().getValue()== EventType.LOGIN.getValue()){//登录
-                msgEvent = JSON.parseObject(evenjson,LoginEvent.class);
-            }else if(header.getEventType().getValue()== EventType.JOINROOM.getValue()){//加入聊天室
-                msgEvent = JSON.parseObject(evenjson,JoinRoomEvent.class);
-            }else if(header.getEventType().getValue()== EventType.PLAINMSG.getValue()){//普通文本消息
-                msgEvent = JSON.parseObject(evenjson,PlainUserMsgEvent.class);
-            }else if(header.getEventType().getValue()== EventType.RICHMSG.getValue()){//道具礼物消息
-                msgEvent = JSON.parseObject(evenjson,RichUserMsgEvent.class);
-            }else if(header.getEventType().getValue()== EventType.QUITROOM.getValue()){//退出聊天室
-                msgEvent = JSON.parseObject(evenjson,QuitRoomEvent.class);
-            }else{
-                return new ResultBean(101,"错误eventType");
-            }
+//            if(header.getEventType().getValue()== EventType.LOGIN.getValue()){//登录
+//                msgEvent = JSON.parseObject(evenjson,LoginEvent.class);
+//            }else if(header.getEventType().getValue()== EventType.JOINROOM.getValue()){//加入聊天室
+//                msgEvent = JSON.parseObject(evenjson,JoinRoomEvent.class);
+//            }else if(header.getEventType().getValue()== EventType.PLAINMSG.getValue()){//普通文本消息
+//                msgEvent = JSON.parseObject(evenjson,PlainUserMsgEvent.class);
+//            }else if(header.getEventType().getValue()== EventType.RICHMSG.getValue()){//道具礼物消息
+//                msgEvent = JSON.parseObject(evenjson,RichUserMsgEvent.class);
+//            }else if(header.getEventType().getValue()== EventType.QUITROOM.getValue()){//退出聊天室
+//                msgEvent = JSON.parseObject(evenjson,QuitRoomEvent.class);
+//            }else if(header.getEventType().getValue()== EventType.LOGOUT.getValue()) {//登出
+//                msgEvent = JSON.parseObject(evenjson,LogoutEvent.class);
+//            }else{
+//                return new ResultBean(101,"错误eventType");
+//            }
             msg.setEvent(msgEvent);
             msg.setEventMap(null);//map置空  释放内存
             return new ResultBean(0,"");
@@ -121,42 +124,5 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
         return ConnectionManager.checkConnectionAuth(ctx);
     }
 
-    /**
-     * 对用户登录请求进行认证
-     * @param msg
-     * @param ctx
-     */
-    private boolean authorize(Msg msg, ChannelHandlerContext ctx) {
-        boolean valid = checkLogin(msg);
-        //登录成功
-        if(valid){
-            ctx.writeAndFlush(new TextWebSocketFrame("welcome! 登录成功 "));
-            return valid;
-        }else{
-            //非法连接请求
-            //关闭连接
-            ctx.writeAndFlush(new TextWebSocketFrame("connect refuse!!! 登录失败! ")).addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    if (!future.isSuccess()) {
-                        future.cause().printStackTrace();
-                    }
-                    ConnectionManager.closeConnection(ctx);
-                }
-            });
-        }
-        return false;
-    }
 
-    /**
-     * todo 调用rpc接口 检查用户权限
-     * @param msg
-     * @return
-     */
-    private boolean checkLogin(Msg msg) {
-        if(msg.getUser().getUserId()==null){
-            return false;
-        }
-        return true;
-    }
 }
