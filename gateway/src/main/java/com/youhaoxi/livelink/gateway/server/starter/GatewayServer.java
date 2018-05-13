@@ -3,6 +3,8 @@ package com.youhaoxi.livelink.gateway.server.starter;
 import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
+import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.EndpointSender;
+import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.ReceiverThread;
 import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.UpstreamMqDispatcher;
 import com.youhaoxi.livelink.gateway.im.event.EventJsonParserManager;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
@@ -66,6 +68,7 @@ public class GatewayServer {
                     //init Registry
                     HandlerManager.initHandlers();
                     EventJsonParserManager.initParsers();
+                    //new ReceiverThread(new EndpointSender()).start();
                     logger.info("[GatewayServer] Started Successed, registry is complete, waiting for client connect...");
                 } else {
                     logger.error("[GatewayServer] Started Failed, registry is incomplete");

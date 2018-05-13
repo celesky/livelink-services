@@ -29,18 +29,27 @@ public class RabbitProducer {
         }
     }
 
+    /**
+     * 消息格式
+     * eventType+json
+     * @param routeKey
+     * @param msg
+     */
     public  void publish(String routeKey,IMsgEvent msg){
         try {
             String json = JSON.toJSONString(msg);
+            //String str = msg.getEventType()+json;
             channel.basicPublish(EXCHANGE_NAME, routeKey, null, json.getBytes("UTF-8"));
         } catch (IOException e) {
             logger.error("publish error:"+e.getMessage(),e);
         }
     }
-    public  void publish(String routeKey,String msg){
+
+    public  void publish(String routeKey,String str){
         try {
             //String json = JSON.toJSONString(msg);
-            channel.basicPublish(EXCHANGE_NAME, routeKey, null, msg.getBytes("UTF-8"));
+            //logger.debug("publish to routeKey: " + routeKey+" msg:"+str);
+            channel.basicPublish(EXCHANGE_NAME, routeKey, null, str.getBytes("UTF-8"));
         } catch (IOException e) {
             logger.error("publish error:"+e.getMessage(),e);
         }

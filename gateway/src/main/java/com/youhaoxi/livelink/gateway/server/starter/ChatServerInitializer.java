@@ -32,7 +32,7 @@ public class ChatServerInitializer extends ChannelInitializer<Channel> {
         //按照 WebSocket 规范的要求，处理 WebSocket 升级握手、PingWebSocketFrame 、 PongWebSocketFrame 和 CloseWebSocketFrame
         pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
         pipeline.addLast(new TextWSFrameToMsgDecoder());//websocketFrame转换成消息实体
-        pipeline.addLast(new AuthorizeHandler());// 鉴权管理
+        //pipeline.addLast(new AuthorizeHandler());// 鉴权管理
         pipeline.addLast(new ConnectionHandler());//连接管理
         pipeline.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS));//空闲练级额管理
         pipeline.addLast(new HeartbeatHandler());//心跳处理

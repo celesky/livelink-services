@@ -15,4 +15,8 @@ public class Constants {
     public final static int workerNum =4;
 
 
+
+    public static final String LOCALHOST = NetUtils.getLocalAddress().getHostAddress();
+
+
 }

@@ -42,7 +42,7 @@ public class RabbitConsumer {
                 public void handleDelivery(String consumerTag, Envelope envelope,
                                            AMQP.BasicProperties properties, byte[] body) throws IOException {
                     String message = new String(body, "UTF-8");
-                    System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+                    logger.debug(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
 
                     //下发给用户
                     sender.send(body);

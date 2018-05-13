@@ -1,11 +1,17 @@
 package com.youhaoxi.livelink.gateway.util;
 
+import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.common.NetUtils;
 import com.youhaoxi.livelink.gateway.common.RedisUtil;
+import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 用户的连接情况 redis数据结构: HASH
@@ -22,6 +28,8 @@ import java.time.format.DateTimeFormatter;
  * 聊天室管理
  */
 public class ChatRoomRedisManager {
+    private static final Logger logger = LoggerFactory.getLogger(ChatRoomRedisManager.class);
+
     private static final int CACHE_EXPIRE_HOUR_6 = 6*60*60;
     /*
      userId:LINKHOST-->hostString
@@ -31,8 +39,8 @@ public class ChatRoomRedisManager {
     //userId-->roomId  string存储
     //private static final String USERID_ROOM_RALATION_KEY = "USERID_ROOMID_RALATION#%s";
 
-    //roomId->userId  zset排序存储  按加入房间的顺序
-    private static final String ROOMID_USERID_RALATION_ZSET_KEY="ROOMID_USERID_RALATION_HASH#%s";
+    //roomId->userId:host  zset排序存储  按加入房间的顺序
+    private static final String ROOMID_USERID_RALATION_ZSET_KEY="ROOMID_USERID_RALATION_ZSET#%s";
 
     private static final String HOST = NetUtils.getLocalAddress().getHostAddress();
     /**
@@ -54,7 +62,7 @@ public class ChatRoomRedisManager {
     private static void setRoomIdMembers(String roomId,Integer userId){
         String key = String.format(ROOMID_USERID_RALATION_ZSET_KEY,roomId);
         double timestamp = Instant.now().toEpochMilli();
-        RedisUtil.cache().zadd(key,timestamp,userId.toString());
+        RedisUtil.cache().zadd(key,timestamp,userId+":"+Constants.LOCALHOST);
     }
 
     /**
@@ -64,9 +72,9 @@ public class ChatRoomRedisManager {
      */
     private static void removeRoomIdMembers(String roomId,Integer userId){
         String key = String.format(ROOMID_USERID_RALATION_ZSET_KEY,roomId);
-        double timestamp = Instant.now().toEpochMilli();
+        //double timestamp = Instant.now().toEpochMilli();
         //RedisUtil.cache().zadd(key,timestamp,userId.toString());
-        RedisUtil.cache().zrem(key,userId.toString());
+        RedisUtil.cache().zrem(key,String.valueOf(userId));
     }
     /**
      * 给userId删除roomId映射
@@ -95,15 +103,15 @@ public class ChatRoomRedisManager {
         removeUserIdRoomIdRelation(userId);
     }
 
-    /**
-     * 将用户添加到聊天室
-     * @param userId
-     * @param roomId
-     */
-    public static void removeUserToRoom(Integer userId,String roomId){
-        setRoomIdMembers(roomId,userId);
-        setUserIdRoomIdRelation(userId,roomId);
-    }
+//    /**
+//     * 将用户添加到聊天室
+//     * @param userId
+//     * @param roomId
+//     */
+//    public static void removeUserToRoom(Integer userId,String roomId){
+//        setRoomIdMembers(roomId,userId);
+//        setUserIdRoomIdRelation(userId,roomId);
+//    }
 
     /**
      * 配置 userId-->host 映射
@@ -131,7 +139,40 @@ public class ChatRoomRedisManager {
      */
     public static void removeUserIdHostRelation(Integer userId){
         String key = String.format(USERID_RELATION_HASH_KEY,userId);
-        RedisUtil.cache().hdel(key,UserRelationField.LINKHOST);
+        String host = getUserIdHostRelation( userId);
+        if(Constants.LOCALHOST.equals(host)){
+            RedisUtil.cache().hdel(key,UserRelationField.LINKHOST);
+        }
+    }
+
+    /**
+     * 当关闭服务时调用
+     * 清理掉userId在redis中的数据
+     */
+    public static void clearUserIdRedisRelation(){
+        logger.info("clearUserIdRedisRelation HOST:"+ Constants.LOCALHOST);
+//        Map<Integer,ChannelHandlerContext> map = ConnectionManager.getCtxMap();
+//        if(map!=null){
+//            map.keySet().stream().forEach(e->{
+//                removeUserIdHostRelation(e);//删除用户id 和host关联关系  redis
+//            });
+//        }
+    }
+
+    public static Set<String> getAllRoomMemnbers(String roomId){
+        String key = String.format(ROOMID_USERID_RALATION_ZSET_KEY,roomId);
+        Set<String> set =  RedisUtil.cache().zrange(key,0,-1);
+        return set;
+    }
+    public static Set<String> getRoomMemnbersLimit(String roomId,int start,int stop){
+        String key = String.format(ROOMID_USERID_RALATION_ZSET_KEY,roomId);
+        Set<String> set =  RedisUtil.cache().zrange(key,start,stop);
+        return set;
+    }
+    public static long getRoomMemnbersCount(String roomId){
+        String key = String.format(ROOMID_USERID_RALATION_ZSET_KEY,roomId);
+        long count =  RedisUtil.cache().zcard(key);
+        return count;
     }
 
     /**
@@ -151,6 +192,11 @@ public class ChatRoomRedisManager {
 
         //URL url = URL.valueOf("dubbo://" + NetUtils.getLocalAddress().getHostAddress() + ":2233");
         System.out.println("NetUtils.getLocalAddress().getHostAddress()  = " + NetUtils.getLocalAddress().getHostAddress() );
+
+
+        for(int i=10000;i<20000;i++){
+            setRoomIdMembers("room1001",i);
+        }
     }
 
 }

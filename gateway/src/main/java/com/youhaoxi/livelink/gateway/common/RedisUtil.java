@@ -34,6 +34,7 @@ public class RedisUtil {
     public static void main(String[] args) {
         RedisUtil.cache().set("test","hello");
         System.out.println("args = " + RedisUtil.cache().get("test"));
+
     }
 
 

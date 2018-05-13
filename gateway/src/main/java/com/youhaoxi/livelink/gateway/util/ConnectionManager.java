@@ -10,6 +10,7 @@ import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
@@ -105,6 +106,10 @@ public class ConnectionManager {
     public static Integer getUserIdInCtx(ChannelHandlerContext ctx){
         Integer userId = ctx.channel().attr(AK_USER_ID).get();
         return userId;
+    }
+
+    public static ConcurrentHashMap<Integer, ChannelHandlerContext> getCtxMap() {
+        return ctxMap;
     }
 
 
