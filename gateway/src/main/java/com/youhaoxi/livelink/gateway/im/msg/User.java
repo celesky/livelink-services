@@ -5,7 +5,7 @@ public class User{
     public String name;
     public String headImg;
 
-    public Integer getUserId() {
+    public int getUserId() {
         return userId;
     }
 

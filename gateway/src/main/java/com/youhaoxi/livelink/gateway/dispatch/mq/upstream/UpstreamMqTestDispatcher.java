@@ -4,6 +4,7 @@ import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.Dispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
 import com.youhaoxi.livelink.gateway.im.enums.BroadType;
+import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.UserMsgEvent;
 import com.youhaoxi.livelink.gateway.im.msg.IMsg;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
@@ -18,7 +19,7 @@ public class UpstreamMqTestDispatcher implements Dispatcher {
     RabbitProducer producer = new RabbitProducer();
 
     @Override
-    public void dispatch(IMsg iMsg) {
+    public void dispatch(IMsgEvent iMsg) {
 
         //Msg msg = (Msg)iMsg;
         //UserMsgEvent plainUserMsgEvent = (UserMsgEvent)msg.event;

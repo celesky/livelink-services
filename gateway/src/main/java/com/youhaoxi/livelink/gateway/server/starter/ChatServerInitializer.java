@@ -1,10 +1,10 @@
-package com.youhaoxi.livelink.gateway.starter;
+package com.youhaoxi.livelink.gateway.server.starter;
 
-import com.youhaoxi.livelink.gateway.decoder.TextWSFrameToMsgDecoder;
-import com.youhaoxi.livelink.gateway.handler.AuthorizeHandler;
-import com.youhaoxi.livelink.gateway.handler.ConnectionHandler;
-import com.youhaoxi.livelink.gateway.handler.HeartbeatHandler;
-import com.youhaoxi.livelink.gateway.handler.MsgHandler;
+import com.youhaoxi.livelink.gateway.server.decoder.TextWSFrameToMsgDecoder;
+import com.youhaoxi.livelink.gateway.server.handler.AuthorizeHandler;
+import com.youhaoxi.livelink.gateway.server.handler.ConnectionHandler;
+import com.youhaoxi.livelink.gateway.server.handler.HeartbeatHandler;
+import com.youhaoxi.livelink.gateway.server.handler.MsgHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

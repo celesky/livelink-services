@@ -1,4 +1,4 @@
-package com.youhaoxi.livelink.gateway.handler;
+package com.youhaoxi.livelink.gateway.server.handler;
 
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;

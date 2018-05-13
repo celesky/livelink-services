@@ -3,7 +3,7 @@ package com.youhaoxi.livelink.gateway.im.event;
 import com.youhaoxi.livelink.gateway.im.enums.EventType;
 
 //退出聊天室
-public class QuitRoomEvent implements IMsgEvent {
+public class QuitRoomEvent extends BaseEvent {
     private Integer userId;
     private String roomId;
 
@@ -12,7 +12,8 @@ public class QuitRoomEvent implements IMsgEvent {
         return EventType.QUITROOM.getValue();
     }
 
-    public Integer getUserId() {
+    @Override
+    public int getUserId() {
         return userId;
     }
 

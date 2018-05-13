@@ -3,11 +3,11 @@ package com.youhaoxi.livelink.gateway.im.event;
 import com.youhaoxi.livelink.gateway.im.enums.EventType;
 
 //登录事件
-public class LoginEvent implements IMsgEvent {
+public class LoginEvent extends BaseEvent{
     public Integer userId;
     public String sessionId;
 
-    public Integer getUserId() {
+    public int getUserId() {
         return userId;
     }
 

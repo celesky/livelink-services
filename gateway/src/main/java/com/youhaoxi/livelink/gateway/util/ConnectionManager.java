@@ -74,7 +74,7 @@ public class ConnectionManager {
                     removeFrmCtxMap(ctx);
                 }
             });
-            ctx.close();
+
         }else{
             removeFrmCtxMap(ctx);
         }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,8 @@ public class Worker extends Thread {
     public static Worker[] _workers;
     //每个worker绑定一个 dispatcher-->RabbitProducer--->1个rabbitChannel
     public Dispatcher dispatcher ;
+    private static Random rnd = new Random(Constants.workerNum);
+
 
     protected  volatile boolean _stop =false;
     private  BlockingQueue<EventHandler> taskQueue ;
@@ -94,7 +97,18 @@ public class Worker extends Thread {
     }
 
     public static int getWorkId(Integer str) {
+        if(str==null){
+            //取随机数
+            str = rnd.nextInt();
+        }
         return str.hashCode() % Constants.workerNum;
+    }
+
+
+    public static void main(String[] args) {
+        for(int i=0;i<100;i++){
+            System.out.println("str = rnd.nextInt(); = " + rnd.nextInt());
+        }
     }
 
 

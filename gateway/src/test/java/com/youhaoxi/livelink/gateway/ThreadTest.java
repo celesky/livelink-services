@@ -98,7 +98,7 @@ public class ThreadTest {
         }
         @Override
         public void run() {
-            dispatcher.dispatch(new Msg());
+            //dispatcher.dispatch(new Msg());
             atomicLong.incrementAndGet();
         }
     }

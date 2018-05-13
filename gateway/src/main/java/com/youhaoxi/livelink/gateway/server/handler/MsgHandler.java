@@ -1,7 +1,8 @@
-package com.youhaoxi.livelink.gateway.handler;
+package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
 import com.youhaoxi.livelink.gateway.im.handler.IMEventHandler;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
@@ -16,7 +17,7 @@ import java.util.concurrent.*;
 /**
  * 聊天消息处理
  */
-public class MsgHandler extends SimpleChannelInboundHandler<Msg> {
+public class MsgHandler extends SimpleChannelInboundHandler<IMsgEvent> {
     private static final Logger logger = LoggerFactory.getLogger(MsgHandler.class);
     private static final ExecutorService executorService = new ThreadPoolExecutor(8,
     16,
@@ -31,14 +32,14 @@ public class MsgHandler extends SimpleChannelInboundHandler<Msg> {
      * @throws Exception
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Msg msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, IMsgEvent msg) throws Exception {
         //ConnectionManager.channelGroup.writeAndFlush(new TextWebSocketFrame(jsonMsg));
         logger.debug(">>>聊天信息处理:"+JSONObject.toJSONString(msg));
         //聊天状态处理
         //将消息交给Woker队列去处理
 
         IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
-        Worker.dispatch(msg.user.userId, handler);
+        Worker.dispatch(msg.getUserId(), handler);
 
         /**
         if(msg.getEvent() instanceof JoinRoomEvent){ //加入聊天室

@@ -3,6 +3,7 @@ package com.youhaoxi.livelink.gateway.dispatch.mq.upstream;
 import com.youhaoxi.livelink.gateway.dispatch.Dispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
 import com.youhaoxi.livelink.gateway.im.enums.BroadType;
+import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.UserMsgEvent;
 import com.youhaoxi.livelink.gateway.im.msg.IMsg;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
@@ -21,23 +22,22 @@ public class UpstreamMqDispatcher implements Dispatcher{
 
 
     @Override
-   public void dispatch(IMsg iMsg) {
+   public void dispatch(IMsgEvent msg) {
 
-        Msg msg = (Msg)iMsg;
-        UserMsgEvent plainUserMsgEvent = (UserMsgEvent)msg.event;
+        UserMsgEvent userMsgEvent = (UserMsgEvent)msg;
         //调度
-        if(plainUserMsgEvent.getBroadType().getValue() == BroadType.MASS.getValue()){
-            String roomId = plainUserMsgEvent.getReceiveRoomId();
+        if(userMsgEvent.getBroadType().getValue() == BroadType.MASS.getValue()){
+            String roomId = userMsgEvent.getReceiveRoomId();
             //获取房间成员列表
             //RedisUtil.cache().z
-            logger.info(">>消息群发:"+ plainUserMsgEvent.toString()+" 已经广播到了"+roomId+" 房间");
+            logger.info(">>消息群发:"+ userMsgEvent.toString()+" 已经广播到了"+roomId+" 房间");
         }else{
             //私聊消息
             //获取对方连接主机的host
-            Integer receiverUserId = plainUserMsgEvent.getReceiverUserId();
+            Integer receiverUserId = userMsgEvent.getReceiverUserId();
             String destHost = ChatRoomRedisManager.getUserIdHostRelation(receiverUserId);
             //发到host对应的mq
-            logger.info(">>消息私聊:"+ plainUserMsgEvent.toString()+" 发送给了用户"+receiverUserId);
+            logger.info(">>消息私聊:"+ userMsgEvent.toString()+" 发送给了用户"+receiverUserId);
             producer.publish(destHost,msg);
         }
     }

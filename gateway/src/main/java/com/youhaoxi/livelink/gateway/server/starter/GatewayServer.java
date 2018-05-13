@@ -1,4 +1,4 @@
-package com.youhaoxi.livelink.gateway.starter;
+package com.youhaoxi.livelink.gateway.server.starter;
 
 import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
@@ -39,7 +39,7 @@ public class GatewayServer {
 
 
 
-        //注册信号监听事件
+        //注册信号监听事件 kill -15
         KillHandler killHandler = new KillHandler();
         killHandler.registerSignal("TERM");
         //jvm关闭钩子线程 做退出资源清理

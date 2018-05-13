@@ -1,6 +1,7 @@
 package com.youhaoxi.livelink.gateway.dispatch.mq.upstream;
 
 import com.youhaoxi.livelink.gateway.im.enums.BroadType;
+import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.PlainUserMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.RichUserMsgEvent;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
@@ -18,21 +19,21 @@ import java.util.concurrent.Callable;
 public class UpToMqTask implements Callable<Integer> {
     private static final Logger logger = LoggerFactory.getLogger(UpToMqTask.class);
 
-    Msg msg;
+    IMsgEvent msg;
 
     RabbitProducer producer = new RabbitProducer();
 
     public UpToMqTask(){
 
     }
-    public UpToMqTask(Msg msg){
+    public UpToMqTask(IMsgEvent msg){
         this.msg = msg;
     }
     @Override
     public Integer call() throws Exception {
 
-        if(msg.getEvent() instanceof PlainUserMsgEvent){//普通消息
-            PlainUserMsgEvent plainUserMsgEvent = (PlainUserMsgEvent) msg.getEvent();
+        if(msg instanceof PlainUserMsgEvent){//普通消息
+            PlainUserMsgEvent plainUserMsgEvent = (PlainUserMsgEvent) msg;
             //群发消息, 用户可能没加入到这个群,需要前置校验下
             if(plainUserMsgEvent.getBroadType().getValue() == BroadType.MASS.getValue()){
                 String roomId = plainUserMsgEvent.getReceiveRoomId();
@@ -46,11 +47,11 @@ public class UpToMqTask implements Callable<Integer> {
                 String host = ChatRoomRedisManager.getUserIdHostRelation(receiverUserId);
                 //发到host对应的mq
                 logger.info(">>普通消息私聊:"+ plainUserMsgEvent.toString()+" 发送给了用户"+receiverUserId);
-                producer.publish(host, msg);
+                //producer.publish(host, msg);
 
             }
-        }else if(msg.getEvent() instanceof RichUserMsgEvent){//道具礼物消息
-            RichUserMsgEvent plainMsgEvent = (RichUserMsgEvent) msg.getEvent();
+        }else if(msg instanceof RichUserMsgEvent){//道具礼物消息
+            RichUserMsgEvent plainMsgEvent = (RichUserMsgEvent) msg;
         }
         return null;
     }

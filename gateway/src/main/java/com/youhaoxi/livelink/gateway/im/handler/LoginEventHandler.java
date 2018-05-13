@@ -1,6 +1,8 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
+import com.youhaoxi.livelink.gateway.im.event.LoginEvent;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
 import com.youhaoxi.livelink.gateway.util.ChatRoomRedisManager;
 import com.youhaoxi.livelink.gateway.util.ConnectionManager;
@@ -14,23 +16,23 @@ import org.slf4j.LoggerFactory;
 public class LoginEventHandler extends IMEventHandler {
     private static final Logger logger = LoggerFactory.getLogger(LoginEventHandler.class);
 
-    public LoginEventHandler(ChannelHandlerContext ctx, Msg msg) {
+    public LoginEventHandler(ChannelHandlerContext ctx, IMsgEvent msg) {
         super(ctx, msg);
     }
 
     @Override
     public void execute(Worker woker) {
         logger.debug(">>>用户登录事件处理:"+msg.toString());
-
-        boolean valid = checkLogin(msg);
+        LoginEvent loginEvent = (LoginEvent)msg;
+        boolean valid = checkLogin(loginEvent);
         //登录成功
         if(valid){
             ctx.writeAndFlush(new TextWebSocketFrame("welcome! 登录成功 "));
 
             //添加到连接管理容器,并设置userId属性到Channel
-            ConnectionManager.addConnection(msg.getUser().getUserId(),ctx);
+            ConnectionManager.addConnection(loginEvent.getUser().getUserId(),ctx);
             //userId 和host主机映射关系 添加到redis
-            ChatRoomRedisManager.setUserIdHostRelation(msg.getUser().getUserId());
+            ChatRoomRedisManager.setUserIdHostRelation(loginEvent.getUser().getUserId());
         }else{
             //非法连接请求
             //关闭连接
@@ -47,11 +49,11 @@ public class LoginEventHandler extends IMEventHandler {
     }
     /**
      * todo 调用rpc接口 检查用户权限
-     * @param msg
+     * @param loginEvent
      * @return
      */
-    private boolean checkLogin(Msg msg) {
-        if(msg.getUser().getUserId()==null){
+    private boolean checkLogin(LoginEvent loginEvent) {
+        if(loginEvent.getUser()==null){
             return false;
         }
         return true;

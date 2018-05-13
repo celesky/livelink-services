@@ -3,6 +3,7 @@ package com.youhaoxi.livelink.gateway.dispatch.mq;
 import com.alibaba.fastjson.JSON;
 import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
+import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
 import com.youhaoxi.livelink.gateway.common.Constants;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class RabbitProducer {
         }
     }
 
-    public  void publish(String routeKey,Msg msg){
+    public  void publish(String routeKey,IMsgEvent msg){
         try {
             String json = JSON.toJSONString(msg);
             channel.basicPublish(EXCHANGE_NAME, routeKey, null, json.getBytes("UTF-8"));

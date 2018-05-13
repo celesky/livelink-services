@@ -1,6 +1,6 @@
-package com.youhaoxi.livelink.gateway.starter;
+package com.youhaoxi.livelink.gateway.server.starter;
 
-import com.youhaoxi.livelink.gateway.handler.TextWebSocketFrameHandler;
+import com.youhaoxi.livelink.gateway.server.handler.TextWebSocketFrameHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

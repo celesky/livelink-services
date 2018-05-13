@@ -2,6 +2,7 @@ package com.youhaoxi.livelink.gateway.im.event;
 
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.im.enums.EventType;
+import com.youhaoxi.livelink.gateway.im.enums.RichMsgType;
 import com.youhaoxi.livelink.gateway.im.handler.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +40,11 @@ public class EventJsonParserManager {
 
     public static void initParsers() {
         eventMap.put(EventType.LOGIN.getValue(),LoginEvent.class);
-        eventMap.put(EventType.LOGOUT.getValue(),LoginEvent.class);
-        eventMap.put(EventType.JOINROOM.getValue(),LoginEvent.class);
-        eventMap.put(EventType.QUITROOM.getValue(),LoginEvent.class);
-        eventMap.put(EventType.PLAINMSG.getValue(),LoginEvent.class);
-        eventMap.put(EventType.RICHMSG.getValue(),LoginEvent.class);
+        eventMap.put(EventType.LOGOUT.getValue(),LogoutEvent.class);
+        eventMap.put(EventType.JOINROOM.getValue(),JoinRoomEvent.class);
+        eventMap.put(EventType.QUITROOM.getValue(),QuitRoomEvent.class);
+        eventMap.put(EventType.PLAINMSG.getValue(),PlainUserMsgEvent.class);
+        eventMap.put(EventType.RICHMSG.getValue(),RichUserMsgEvent.class);
 
     }
 }

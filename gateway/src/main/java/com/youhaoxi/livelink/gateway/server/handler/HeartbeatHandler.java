@@ -1,4 +1,4 @@
-package com.youhaoxi.livelink.gateway.handler;
+package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.youhaoxi.livelink.gateway.util.ConnectionManager;
 import io.netty.channel.ChannelFuture;

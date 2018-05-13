@@ -2,6 +2,7 @@ package com.youhaoxi.livelink.gateway.im.handler;
 
 
 import com.youhaoxi.livelink.gateway.im.enums.EventType;
+import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.msg.IMsg;
 import com.youhaoxi.livelink.gateway.im.msg.Msg;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,16 +27,16 @@ public class HandlerManager {
     public static void register(int eventType, Class<? extends IMEventHandler> handler) {
 
         try {
-            Constructor<? extends IMEventHandler> constructor = handler.getConstructor(ChannelHandlerContext.class, Msg.class);
+            Constructor<? extends IMEventHandler> constructor = handler.getConstructor(ChannelHandlerContext.class, IMsgEvent.class);
             _handlers.put(eventType, constructor);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static IMEventHandler getHandler(ChannelHandlerContext ctx,Msg msg)
+    public static IMEventHandler getHandler(ChannelHandlerContext ctx,IMsgEvent msg)
             throws IllegalAccessException, InvocationTargetException, InstantiationException {
-        int eventType=msg.getEvent().getEventType();
+        int eventType=msg.getEventType();
         Constructor<? extends IMEventHandler> constructor = _handlers.get(eventType);
         if(constructor == null) {
             logger.error("IMEventHandler not exist, eventType: {} msg:{}", eventType,msg.toString());

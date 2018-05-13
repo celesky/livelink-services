@@ -12,7 +12,7 @@ import com.youhaoxi.livelink.gateway.im.enums.RichMsgType;
  * 用户这种消息  需要路由
  *
  */
-public abstract class UserMsgEvent implements IMsgEvent{
+public abstract class UserMsgEvent extends BaseEvent{
     protected BroadType broadType;//1:群发 2:点对点
     protected Integer receiverUserId;//接收方用户id  私聊
     protected String receiveRoomId;//接收方群id  群聊

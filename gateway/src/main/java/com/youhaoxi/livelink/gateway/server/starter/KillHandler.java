@@ -1,4 +1,4 @@
-package com.youhaoxi.livelink.gateway.starter;
+package com.youhaoxi.livelink.gateway.server.starter;
 
 import sun.misc.Signal;
 import sun.misc.SignalHandler;

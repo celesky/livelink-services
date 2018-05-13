@@ -1,4 +1,4 @@
-package com.youhaoxi.livelink.gateway.handler;
+package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
@@ -7,9 +7,6 @@ import com.youhaoxi.livelink.gateway.im.enums.EventType;
 import com.youhaoxi.livelink.gateway.im.event.*;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
 import com.youhaoxi.livelink.gateway.im.handler.IMEventHandler;
-import com.youhaoxi.livelink.gateway.im.msg.Header;
-import com.youhaoxi.livelink.gateway.im.msg.Msg;
-import com.youhaoxi.livelink.gateway.im.msg.User;
 import com.youhaoxi.livelink.gateway.util.ConnectionManager;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -35,7 +32,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object m) throws Exception {
-        Msg msg = (Msg)m;
+        IMsgEvent msg = (IMsgEvent)m;
 
         //ConnectionManager.channelGroup.writeAndFlush(im.retain());
         logger.debug("userMsg = " + msg.toString());
@@ -56,9 +53,9 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
             });
         }
         //登录事件  鉴权
-        if(msg.event instanceof LoginEvent) {
+        if(msg.getEventType()== EventType.LOGIN.getValue()) {
             IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
-            Worker.dispatch(msg.user.userId, handler);
+            Worker.dispatch(msg.getUserId(), handler);
         }else{
             //session检查
             boolean result = checkSession(ctx);
@@ -70,43 +67,16 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-    private ResultBean paramCheck(Msg msg) {
+    private ResultBean paramCheck(IMsgEvent msg) {
         try{
-            if(msg.getHeader()==null){
+            BaseEvent baseEvent = (BaseEvent)msg;
+            if(baseEvent.getHeader()==null){
                 return new ResultBean(100,"header partition not exist");
             }
-            if(msg.getUser()==null){
+            if(baseEvent.getUser()==null){
                 return new ResultBean(100,"user partition not exist");
             }
-            if(msg.getEventMap()==null){
-                return new ResultBean(100,"eventMap partition not exist");
-            }
-            Header header = msg.getHeader();
-            User user = msg.getUser();
-            HashMap eventMap = msg.getEventMap();
 
-            //登录消息 map转成对应实体
-            IMsgEvent msgEvent=null;
-            String evenjson = JSON.toJSONString(eventMap);
-            msgEvent = EventJsonParserManager.parseJsonToEvent(header.eventType.getValue(),evenjson);
-
-//            if(header.getEventType().getValue()== EventType.LOGIN.getValue()){//登录
-//                msgEvent = JSON.parseObject(evenjson,LoginEvent.class);
-//            }else if(header.getEventType().getValue()== EventType.JOINROOM.getValue()){//加入聊天室
-//                msgEvent = JSON.parseObject(evenjson,JoinRoomEvent.class);
-//            }else if(header.getEventType().getValue()== EventType.PLAINMSG.getValue()){//普通文本消息
-//                msgEvent = JSON.parseObject(evenjson,PlainUserMsgEvent.class);
-//            }else if(header.getEventType().getValue()== EventType.RICHMSG.getValue()){//道具礼物消息
-//                msgEvent = JSON.parseObject(evenjson,RichUserMsgEvent.class);
-//            }else if(header.getEventType().getValue()== EventType.QUITROOM.getValue()){//退出聊天室
-//                msgEvent = JSON.parseObject(evenjson,QuitRoomEvent.class);
-//            }else if(header.getEventType().getValue()== EventType.LOGOUT.getValue()) {//登出
-//                msgEvent = JSON.parseObject(evenjson,LogoutEvent.class);
-//            }else{
-//                return new ResultBean(101,"错误eventType");
-//            }
-            msg.setEvent(msgEvent);
-            msg.setEventMap(null);//map置空  释放内存
             return new ResultBean(0,"");
         }catch (Exception e){
             e.printStackTrace();

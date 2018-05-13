@@ -3,6 +3,7 @@ package com.youhaoxi.livelink.gateway.dispatch.mq;
 import com.rabbitmq.client.*;
 import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.common.NetUtils;
+import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,8 @@ public class RabbitConsumer {
     private static final String EXCHANGE_NAME = Constants.EXCHANGE_NAME;
     private static Channel channel = RabbitConnectionManager.getInstance().getNewChannel();
     private String queueName;
+
+    private Sender sender;
 
 
     public RabbitConsumer(){
@@ -40,6 +43,10 @@ public class RabbitConsumer {
                                            AMQP.BasicProperties properties, byte[] body) throws IOException {
                     String message = new String(body, "UTF-8");
                     System.out.println(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+
+                    //下发给用户
+                    sender.send(body);
+
                 }
             };
             channel.basicConsume(queueName, true, consumer);
@@ -56,4 +63,12 @@ public class RabbitConsumer {
         new RabbitConsumer().consume(host);
     }
 
+    public Sender getSender() {
+        return sender;
+    }
+
+    public RabbitConsumer setSender(Sender sender) {
+        this.sender = sender;
+        return this;
+    }
 }

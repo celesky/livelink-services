@@ -6,4 +6,6 @@ package com.youhaoxi.livelink.gateway.im.event;
 public interface IMsgEvent {
 
     int getEventType();
+
+    int getUserId();
 }
