@@ -2,13 +2,12 @@ package com.youhaoxi.livelink.gateway.dispatch.mq.upstream;
 
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
 import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
-import com.youhaoxi.livelink.gateway.common.StringUtils;
+import com.youhaoxi.livelink.gateway.common.util.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.EventDispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
 import com.youhaoxi.livelink.gateway.im.JsonEventPackUtil;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.UserMsgEvent;
-import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

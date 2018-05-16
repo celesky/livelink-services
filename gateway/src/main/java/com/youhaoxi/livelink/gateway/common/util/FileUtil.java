@@ -1,4 +1,4 @@
-package com.youhaoxi.livelink.gateway.common;
+package com.youhaoxi.livelink.gateway.common.util;
 
 import com.google.common.base.Splitter;
 

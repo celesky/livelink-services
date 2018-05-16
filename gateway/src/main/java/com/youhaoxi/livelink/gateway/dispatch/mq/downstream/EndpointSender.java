@@ -1,7 +1,7 @@
 package com.youhaoxi.livelink.gateway.dispatch.mq.downstream;
 
 import com.alibaba.fastjson.JSON;
-import com.youhaoxi.livelink.gateway.common.ClientPushUtil;
+import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

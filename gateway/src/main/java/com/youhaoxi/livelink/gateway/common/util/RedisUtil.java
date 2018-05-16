@@ -1,7 +1,8 @@
-package com.youhaoxi.livelink.gateway.common;
+package com.youhaoxi.livelink.gateway.common.util;
 
 import com.huisa.common.cache.redis.JedisCache;
 import com.huisa.common.cache.redis.assist.Config_JedisCache;
+import com.youhaoxi.livelink.gateway.common.Constants;
 
 public class RedisUtil {
 

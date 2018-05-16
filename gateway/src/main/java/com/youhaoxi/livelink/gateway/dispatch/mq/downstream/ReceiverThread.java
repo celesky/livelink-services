@@ -1,13 +1,7 @@
 package com.youhaoxi.livelink.gateway.dispatch.mq.downstream;
 
 import com.youhaoxi.livelink.gateway.common.Constants;
-import com.youhaoxi.livelink.gateway.common.NetUtils;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConsumer;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class ReceiverThread extends Thread{
 

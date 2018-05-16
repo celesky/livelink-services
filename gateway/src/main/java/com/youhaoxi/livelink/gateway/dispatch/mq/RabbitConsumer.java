@@ -2,7 +2,7 @@ package com.youhaoxi.livelink.gateway.dispatch.mq;
 
 import com.rabbitmq.client.*;
 import com.youhaoxi.livelink.gateway.common.Constants;
-import com.youhaoxi.livelink.gateway.common.NetUtils;
+import com.youhaoxi.livelink.gateway.common.util.NetUtils;
 import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -2,6 +2,7 @@
 <configuration>
 
 	<!--
+		debug<info<warn<Error<Fatal 右边的会写日志,左边不会写
         <property scope="context" name="logFilePath" value="/data/logs/movie-dubbo-provider" />
     -->
         <property scope="context" name="logFilePath" value="/Users/pan/myfile/intellij/movie-services/logs" />

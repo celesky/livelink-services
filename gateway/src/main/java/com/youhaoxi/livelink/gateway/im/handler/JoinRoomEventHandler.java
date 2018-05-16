@@ -2,14 +2,12 @@ package com.youhaoxi.livelink.gateway.im.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
-import com.youhaoxi.livelink.gateway.cache.UserInfoHashCache;
-import com.youhaoxi.livelink.gateway.common.ClientPushUtil;
+import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.JoinRoomEvent;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
-import com.youhaoxi.livelink.gateway.im.msg.User;
 import io.netty.channel.ChannelHandlerContext;
 
 /**

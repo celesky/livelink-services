@@ -1,5 +1,7 @@
 package com.youhaoxi.livelink.gateway.common;
 
+import com.youhaoxi.livelink.gateway.common.util.NetUtils;
+
 public class Constants {
     //rabbitMq
     public static String RABBIT_HOST ="47.106.140.44";

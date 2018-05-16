@@ -1,7 +1,7 @@
 package com.youhaoxi.livelink.gateway.cache;
 
 import com.youhaoxi.livelink.gateway.common.Constants;
-import com.youhaoxi.livelink.gateway.common.RedisUtil;
+import com.youhaoxi.livelink.gateway.common.util.RedisUtil;
 
 public class UserRelationHashCache {
 

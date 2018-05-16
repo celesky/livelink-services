@@ -3,7 +3,7 @@ package com.youhaoxi.livelink.gateway.dispatch.mq.upstream;
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
 import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
-import com.youhaoxi.livelink.gateway.common.StringUtils;
+import com.youhaoxi.livelink.gateway.common.util.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.ResultMsgDispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;

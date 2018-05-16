@@ -1,6 +1,6 @@
 package com.youhaoxi.livelink.gateway.cache;
 
-import com.youhaoxi.livelink.gateway.common.RedisUtil;
+import com.youhaoxi.livelink.gateway.common.util.RedisUtil;
 import com.youhaoxi.livelink.gateway.im.msg.User;
 
 import java.util.Map;
