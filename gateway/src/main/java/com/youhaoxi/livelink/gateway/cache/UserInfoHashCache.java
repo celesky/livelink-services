@@ -21,6 +21,10 @@ public class UserInfoHashCache {
         static String name="NAME";
     }
 
+    public static void removeUserInfoHash(int userId){
+        String key = String.format(USER_INFO_HASH_KEY,userId);
+        RedisUtil.cache().del(key);
+    }
 
 
     public static User getUserInfoFromRedis(int userId){
@@ -39,6 +43,5 @@ public class UserInfoHashCache {
         String key = String.format(USER_INFO_HASH_KEY,userId);
         RedisUtil.cache().hset(key, UserInfoField.img,user.img);
         RedisUtil.cache().hset(key, UserInfoField.name,user.name);
-
     }
 }

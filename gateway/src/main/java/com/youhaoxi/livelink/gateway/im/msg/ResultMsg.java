@@ -1,5 +1,7 @@
 package com.youhaoxi.livelink.gateway.im.msg;
 
+import java.util.HashMap;
+
 /**
  * 下发的消息协议
  */
@@ -10,6 +12,9 @@ public class ResultMsg {
     public User dest;
     public Info info;
     public String roomId;//群id
+    public Long timestamp;//群id
+
+    private HashMap statsMap;//用于运行监测数据返回
 
     public ResultMsg(){
 
@@ -119,6 +124,22 @@ public class ResultMsg {
         }
     }
 
+    public Long getTimestamp() {
+        return timestamp;
+    }
 
+    public ResultMsg setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+        return this;
+    }
+
+    public HashMap getStatsMap() {
+        return statsMap;
+    }
+
+    public ResultMsg setStatsMap(HashMap statsMap) {
+        this.statsMap = statsMap;
+        return this;
+    }
 }
 

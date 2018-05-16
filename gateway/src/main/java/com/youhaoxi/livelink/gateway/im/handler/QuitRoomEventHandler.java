@@ -34,7 +34,5 @@ public class QuitRoomEventHandler extends IMEventHandler {
             result.setRoomId(event.getRoomId());
             woker.dispatcher.groupDispatch(result,event.getRoomId());
         }
-
-
     }
 }

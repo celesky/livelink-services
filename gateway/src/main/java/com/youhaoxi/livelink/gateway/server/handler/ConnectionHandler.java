@@ -36,7 +36,8 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
         ConnectionManager.closeConnection(ctx);
         Integer userId = ConnectionManager.getUserIdInCtx(ctx);
         if(userId!=null){
-            UserRelationHashCache.removeUserIdHostRelation(userId);
+            //UserRelationHashCache.removeUserIdHostRelation(userId);
+            ChatRoomRedisManager.clearUserIdRedisData(userId);
         }
 
     }
@@ -53,7 +54,7 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
         if (evt == WebSocketServerProtocolHandler
                 .ServerHandshakeStateEvent.HANDSHAKE_COMPLETE) {
 
-            ConnectionManager.channelGroup.writeAndFlush(new TextWebSocketFrame("Client " + ctx.channel() + " joined"));
+            //ConnectionManager.channelGroup.writeAndFlush(new TextWebSocketFrame("Client " + ctx.channel() + " joined"));
             //添加到连接组
             ConnectionManager.channelGroup.add(ctx.channel());
 

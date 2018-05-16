@@ -39,12 +39,14 @@ public class EventJsonParserManager {
 
 
     public static void initParsers() {
+        eventMap.put(EventType.CREATEROOM.getValue(),CreateRoomEvent.class);
         eventMap.put(EventType.LOGIN.getValue(),LoginEvent.class);
         eventMap.put(EventType.LOGOUT.getValue(),LogoutEvent.class);
         eventMap.put(EventType.JOINROOM.getValue(),JoinRoomEvent.class);
         eventMap.put(EventType.QUITROOM.getValue(),QuitRoomEvent.class);
         eventMap.put(EventType.PLAINMSG.getValue(),PlainUserMsgEvent.class);
         eventMap.put(EventType.RICHMSG.getValue(),RichUserMsgEvent.class);
+        eventMap.put(EventType.STATS.getValue(),StatsEvent.class);
 
     }
 }

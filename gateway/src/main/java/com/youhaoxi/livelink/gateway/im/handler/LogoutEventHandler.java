@@ -22,6 +22,7 @@ public class LogoutEventHandler extends IMEventHandler {
         logger.debug(">>>用户登出事件:"+msg.toString());
         LogoutEvent logoutEvent =  (LogoutEvent)msg;
         ConnectionManager.closeConnection(ctx);
-        UserRelationHashCache.removeUserIdHostRelation(logoutEvent.from.getUserId());
+        //UserRelationHashCache.removeUserIdHostRelation(logoutEvent.from.getUserId());
+        ChatRoomRedisManager.clearUserIdRedisData(logoutEvent.from.getUserId());
     }
 }

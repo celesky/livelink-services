@@ -42,13 +42,23 @@ public class UserRelationHashCache {
     }
 
     /**
-     * 配置 userId-->host 映射
+     * 获取 userId-->host 映射
      * @param userId
      */
     public static String getUserIdHostRelation(Integer userId){
         String key = String.format(USERID_RELATION_HASH_KEY,userId);
         String host = RedisUtil.cache().hget(key,UserRelationField.LINKHOST);
         return host;
+    }
+
+    /**
+     * 配置 userId-->host 映射
+     * @param userId
+     */
+    public static String getUserIdRoomIdRelation(Integer userId){
+        String key = String.format(USERID_RELATION_HASH_KEY,userId);
+        String roomId = RedisUtil.cache().hget(key,UserRelationField.ROOMID);
+        return roomId;
     }
 
 
@@ -58,10 +68,15 @@ public class UserRelationHashCache {
      */
     public static void removeUserIdHostRelation(Integer userId){
         String key = String.format(USERID_RELATION_HASH_KEY,userId);
-        String host = getUserIdHostRelation( userId);
-        if(Constants.LOCALHOST.equals(host)){
+        //String host = getUserIdHostRelation( userId);
+        //if(Constants.LOCALHOST.equals(host)){
             RedisUtil.cache().hdel(key,UserRelationField.LINKHOST);
-        }
+        //}
+    }
+
+    public static void removeUserRelationHash(Integer userId){
+        String key = String.format(USERID_RELATION_HASH_KEY,userId);
+        RedisUtil.cache().del(key);
     }
 
     /**

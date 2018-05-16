@@ -25,7 +25,7 @@ public class RoomUserRelationSetCache {
     protected static void setRoomIdMembers(String roomId,Integer userId){
         String key = String.format(ROOMID_USERID_RALATION_ZSET_KEY,roomId);
         double timestamp = Instant.now().toEpochMilli();
-        RedisUtil.cache().zadd(key,timestamp,userId+":"+ Constants.LOCALHOST);
+        RedisUtil.cache().zadd(key,timestamp,userId+"");
     }
 
     /**
@@ -47,7 +47,7 @@ public class RoomUserRelationSetCache {
      */
     public static long getRoomMembersCount(String roomId){
         String key = String.format(ROOMID_USERID_RALATION_ZSET_KEY,roomId);
-        long count = RedisUtil.cache().scard(key);
+        long count = RedisUtil.cache().zcard(key);
         return count;
     }
 
@@ -70,6 +70,15 @@ public class RoomUserRelationSetCache {
         return count;
     }
 
+
+    /**
+     * 获取一个新的roomId
+     */
+    public static boolean isUserExistInRoom(Integer userId,String roomId){
+        String key = String.format(ROOMID_USERID_RALATION_ZSET_KEY,roomId);
+        long count =  RedisUtil.cache().zrank(key,String.valueOf(userId));
+        return count>=0;
+    }
 
     /**
      * 获取一个新的roomId

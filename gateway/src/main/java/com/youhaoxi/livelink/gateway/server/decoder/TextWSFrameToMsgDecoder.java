@@ -1,6 +1,7 @@
 package com.youhaoxi.livelink.gateway.server.decoder;
 
 import com.youhaoxi.livelink.gateway.im.JsonEventPackUtil;
+import com.youhaoxi.livelink.gateway.im.event.BaseEvent;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
@@ -8,6 +9,7 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,7 +25,10 @@ public class TextWSFrameToMsgDecoder extends MessageToMessageDecoder<TextWebSock
     @Override
     protected void decode(ChannelHandlerContext ctx, TextWebSocketFrame msg, List<Object> out) throws Exception {
         logger.debug(msg.text());
-        IMsgEvent msgEvent = JsonEventPackUtil.unPack(msg.text());
+        BaseEvent msgEvent = (BaseEvent)JsonEventPackUtil.unPack(msg.text());
+        if(msgEvent.getHeader()!=null){
+            msgEvent.getHeader().setDateTime(LocalDateTime.now());
+        }
         out.add(msgEvent);
     }
 

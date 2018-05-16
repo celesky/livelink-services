@@ -7,6 +7,7 @@ import com.youhaoxi.livelink.gateway.common.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.ResultMsgDispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import com.youhaoxi.livelink.gateway.im.msg.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,10 @@ public class MqRstMsgDispatcher implements ResultMsgDispatcher {
         Integer receiverUserId = msg.dest.userId;
         String destHost = UserRelationHashCache.getUserIdHostRelation(receiverUserId);
         if(!StringUtils.isBlank(destHost)){
+            //如果没有时间 则填上当前时间
+            if(msg.getTimestamp()==null||msg.getTimestamp().intValue()==0){
+                msg.setTimestamp(Instant.now().toEpochMilli());
+            }
             //发到host对应的mq
             logger.info(">>消息私聊: userId:{},destHost:{},已推送mq,msg:{}",receiverUserId,destHost,msg.toString());
             producer.publish(destHost, JSON.toJSONString(msg));
@@ -47,12 +52,13 @@ public class MqRstMsgDispatcher implements ResultMsgDispatcher {
         int start = 0;
         int stop = 199;
         int range = 200;
-        String json = JSON.toJSONString(msg);
+
+        msg.setRoomId(roomId);
         do{
             //线程池派发处理
             //Future<Long> future = groupDispatchExecutor.submit(new groupDspTask( roomId, start, stop, msg));
             //list.add(future);
-            dispatchWithLimit( roomId, start, stop, json);
+            dispatchWithLimit( roomId, start, stop, msg);
             start = start+range;
             stop=stop+range;
 
@@ -63,22 +69,35 @@ public class MqRstMsgDispatcher implements ResultMsgDispatcher {
         logger.info("group chat dispatch exhaust:{}",(endTime-startIime));
     }
 
-    private void dispatchWithLimit(String roomId,int start,int stop,String json) {
+    private void dispatchWithLimit(String roomId,int start,int stop,ResultMsg msg) {
         Set<String> set = RoomUserRelationSetCache.getRoomMemnbersLimit(roomId,start,stop);
         if(set!=null&&set.size()>0){
             set.stream().parallel().forEach(e->{
-                if(e.contains(":")){
-                    String[] arr = e.split(":");
-                    Integer userId = Integer.parseInt(arr[0]);
-                    String destHost = arr[1];
-                    producer.publish(destHost, json);
-                    //logger.info(">>消息群发:roomId:{} ,成员userId:{} ,destHost:{} 已推送mq,msg:{}",roomId,userId,destHost,msg.toString());
+                Integer userId = Integer.parseInt(e);
+                //用户连接在的主机
+                String destHost = UserRelationHashCache.getUserIdHostRelation(userId);
+
+                //设置接收目标的userId
+                if(msg.getDest()==null){
+                    User dest = new User();
+                    dest.setUserId(userId);
+                    msg.setDest(dest);
                 }else{
-                    logger.error("房间roomId:{} members数据格式不正确:{}",roomId,e);
+                    msg.getDest().setUserId(userId);
                 }
+
+                //如果没有时间 则填上当前时间
+                if(msg.getTimestamp()==null||msg.getTimestamp().intValue()==0){
+                    msg.setTimestamp(Instant.now().toEpochMilli());
+                }
+
+                String json = JSON.toJSONString(msg);
+                producer.publish(destHost, json);
+                //logger.info(">>消息群发:roomId:{} ,成员userId:{} ,destHost:{} 已推送mq,msg:{}",roomId,userId,destHost,msg.toString());
+
             });
         }else{
-            logger.info("房间roomId:{} 没有任何成员,该条消息丢弃 msg:{}",roomId,json);
+            logger.info("房间roomId:{} 没有任何成员,该条消息丢弃 msg:{}",roomId,msg.toString());
         }
     }
 }

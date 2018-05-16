@@ -47,12 +47,13 @@ public class HandlerManager {
     }
 
     public static void initHandlers() {
+        HandlerManager.register(EventType.CREATEROOM.getValue(), CreateRoomEventHandler.class);
         HandlerManager.register(EventType.LOGIN.getValue(), LoginEventHandler.class);
         HandlerManager.register(EventType.LOGOUT.getValue(), LogoutEventHandler.class);
         HandlerManager.register(EventType.JOINROOM.getValue(), JoinRoomEventHandler.class);
         HandlerManager.register(EventType.QUITROOM.getValue(), QuitRoomEventHandler.class);
         HandlerManager.register(EventType.PLAINMSG.getValue(), PlainMsgEventHandler.class);
         HandlerManager.register(EventType.RICHMSG.getValue(), RichMsgEventHandler.class);
-
+        HandlerManager.register(EventType.STATS.getValue(), StatsEventHandler.class);
     }
 }

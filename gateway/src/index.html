@@ -66,6 +66,10 @@
         function logout(){
             socket.send(document.getElementById("logoutTxt").value);
         }
+        function stats(){
+            socket.send(document.getElementById("statsTxt").value);
+        }
+
     </script>
 </head>
 
@@ -74,10 +78,9 @@
 <button id="connect" onclick="Connect();">Connect</button>
 <button id="close" onclick="Close();">Close</button>
 <br/><br/><br/>
-<textarea id="loginMsg" type="text"  value="" style="width: 300px;height: 200px">
+<textarea id="loginMsg" type="text"  value="" style="width: 300px;height: 170px">
 1{
-        "sessionId": "sdfafew121fdas",
-        "userId": 222,
+    "sessionId": "sdfafew121fdas",
     "header": {
         "eventType": "LOGIN",
         "uuid": "sdfsfasdfasf232"
@@ -91,11 +94,10 @@
 </textarea>
 <button id="sendLogin" onclick="SendLogin();">SendLogin</button>
 
-<textarea id="createRoomTxt" type="text"  value="" style="width: 300px;height: 200px">
+<textarea id="createRoomTxt" type="text"  value="" style="width: 300px;height: 170px">
 2{
-    "msgContent":"hello myname is zhoujielun",
     "header": {
-        "eventType": "PLAINMSG",
+        "eventType": "createRoom",
         "uuid": "adfafafsdfsfaa123132"
     },
     "from": {
@@ -105,15 +107,13 @@
     }
 }
 </textarea>
-<button id="createRoom" onclick="createRoom();">sendMessage</button>
+<button id="createRoom" onclick="createRoom();">createRoom</button>
 
-<textarea id="joinRoomTxt" type="text"  value="" style="width: 300px;height: 200px">
+<textarea id="joinRoomTxt" type="text"  value="" style="width: 300px;height: 170px">
 3{
-
-    "msgContent":"hello myname is zhoujielun",
-
+    "roomId":"room1",
     "header": {
-        "eventType": "PLAINMSG",
+        "eventType": "JOINROOM",
         "uuid": "adfafafsdfsfaa123132"
     },
     "from": {
@@ -125,14 +125,11 @@
 </textarea>
 <button id="joinRoom" onclick="joinRoom();">joinRoom</button>
 
-<textarea id="quitRoomTxt" type="text"  value="" style="width: 300px;height: 200px">
+<textarea id="quitRoomTxt" type="text"  value="" style="width: 300px;height: 170px">
 4{
-    "broadType": "P2P",
-    "receiverUserId": "111",
-    "msgContent":"hello myname is zhoujielun",
-
+    "roomId":"room3",
     "header": {
-        "eventType": "PLAINMSG",
+        "eventType": "QUITROOM",
         "uuid": "adfafafsdfsfaa123132"
     },
     "from": {
@@ -142,15 +139,15 @@
     }
 }
 </textarea>
-<button id="quitRoom" onclick="quitRoom();">joinRoom</button>
+<button id="quitRoom" onclick="quitRoom();">quitRoom</button>
 
 
-<textarea id="plainMsgTxt" type="text"  value="" style="width: 300px;height: 200px">
+<textarea id="plainMsgTxt" type="text"  value="" style="width: 300px;height: 170px">
 5{
-    "broadType": "P2P",
+    "broadType": "MASS",
     "receiverUserId": "111",
+    "receiveRoomId": "room1",
     "msgContent":"hello myname is zhoujielun",
-
     "header": {
         "eventType": "PLAINMSG",
         "uuid": "adfafafsdfsfaa123132"
@@ -164,14 +161,16 @@
 </textarea>
 <button id="plainMsg" onclick="plainMsg();">sendPlainMsg</button>
 
-<textarea id="richMsgTxt" type="text"  value="" style="width: 300px;height: 200px">
+<textarea id="richMsgTxt" type="text"  value="" style="width: 300px;height: 170px">
 6{
     "broadType": "P2P",
     "receiverUserId": "111",
-    "msgContent":"hello myname is zhoujielun",
-
+    "receiveRoomId": "room1",
+    "RichMsgType":"GIFT",
+    "itemId":8888,
+    "itemCount":1,
     "header": {
-        "eventType": "PLAINMSG",
+        "eventType": "RICHMSG",
         "uuid": "adfafafsdfsfaa123132"
     },
     "from": {
@@ -184,10 +183,10 @@
 <button id="richMsg" onclick="richMsg();">sendRichMsg</button>
 
 
-<textarea id="logoutTxt" type="text"  value="" style="width: 300px;height: 200px">
+<textarea id="logoutTxt" type="text"  value="" style="width: 300px;height: 170px">
 7{
     "header": {
-        "eventType": "PLAINMSG",
+        "eventType": "LOGOUT",
         "uuid": "adfafafsdfsfaa123132"
     },
     "from": {
@@ -198,6 +197,25 @@
 }
 </textarea>
 <button id="logoutMsg" onclick="logout();">logoutMsg</button>
+
+
+
+<textarea id="statsTxt" type="text"  value="" style="width: 300px;height: 170px">
+9{
+    "action":1,
+    "qUserId":222,
+    "qRoomId":"room1",
+    "header": {
+        "eventType": "STATS",
+        "uuid": "adfafafsdfsfaa123132"
+    },
+    "from": {
+        "img": "asdfas",
+        "name": "xdsfa",
+        "userId": 222
+    }
+}</textarea>
+<button id="statsMsg" onclick="stats();">stats</button>
 
 
 <div id="chathis">

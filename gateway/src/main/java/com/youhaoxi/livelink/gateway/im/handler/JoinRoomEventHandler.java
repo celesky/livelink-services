@@ -28,6 +28,14 @@ public class JoinRoomEventHandler  extends IMEventHandler {
         long count = RoomUserRelationSetCache.getRoomMembersCount(event.getRoomId());
         //房间存在
         if(count>0){
+            //用户是否已经在聊天室 如果已经在聊天室 直接返回
+            boolean exist =  RoomUserRelationSetCache.isUserExistInRoom(event.getUserId(),event.getRoomId());
+            if(exist){
+                ResultMsg result = new ResultMsg(202,event.from.name+"已经在聊天室中了");
+                ClientPushUtil.writeToClient(ctx,result,event.from.userId);
+                return ;
+            }
+
             ChatRoomRedisManager.addUserToRoom(event.getUserId(),event.getRoomId());
             //给房间每个人发送一条通知
             //发送人的用户信息

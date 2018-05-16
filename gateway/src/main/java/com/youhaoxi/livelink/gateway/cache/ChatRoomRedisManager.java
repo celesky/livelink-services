@@ -1,13 +1,14 @@
 package com.youhaoxi.livelink.gateway.cache;
 
-import com.youhaoxi.livelink.gateway.common.Constants;
-import com.youhaoxi.livelink.gateway.common.NetUtils;
-import com.youhaoxi.livelink.gateway.common.RedisUtil;
+import com.youhaoxi.livelink.gateway.common.*;
+import com.youhaoxi.livelink.gateway.util.ConnectionManager;
+import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 /**
  * 用户的连接情况 redis数据结构: HASH
@@ -33,15 +34,27 @@ public class ChatRoomRedisManager {
      * @param roomId
      */
     public static void addUserToRoom(Integer userId,String roomId){
-        RoomUserRelationSetCache.setRoomIdMembers(roomId,userId);
-        UserRelationHashCache.setUserIdRoomIdRelation(userId,roomId);
+        RedisLock lock = new RedisLock(RedisLock.USER_REDIS_LOCK_KEY,String.valueOf(userId));
+        try {
+            lock.multitryLock(2000);
+            RoomUserRelationSetCache.setRoomIdMembers(roomId, userId);
+            UserRelationHashCache.setUserIdRoomIdRelation(userId, roomId);
+        }finally {
+            lock.unlock();
+        }
     }
 
     public static void removeUserFromRoom(Integer userId,String roomId){
-        //群成员删除
-        RoomUserRelationSetCache.removeRoomIdMembers(roomId,userId);
-        //用户id -->群id 关系删除
-        UserRelationHashCache.removeUserIdRoomIdRelation(userId);
+        RedisLock lock = new RedisLock(RedisLock.USER_REDIS_LOCK_KEY,String.valueOf(userId));
+        try {
+            lock.multitryLock(2000);
+            //群成员删除
+            RoomUserRelationSetCache.removeRoomIdMembers(roomId, userId);
+            //用户id -->群id 关系删除
+            UserRelationHashCache.removeUserIdRoomIdRelation(userId);
+        }finally {
+            lock.unlock();
+        }
     }
 
 //    /**
@@ -57,18 +70,42 @@ public class ChatRoomRedisManager {
 
 
     /**
-     * 当关闭服务时调用
+     * 当用户退出或者断开连接时
      * 清理掉userId在redis中的数据
      */
-    public static void clearUserIdRedisRelation(){
-        logger.info("clearUserIdRedisRelation HOST:"+ Constants.LOCALHOST);
-//        Map<Integer,ChannelHandlerContext> map = ConnectionManager.getCtxMap();
-//        if(map!=null){
-//            map.keySet().stream().forEach(e->{
-//                removeUserIdHostRelation(e);//删除用户id 和host关联关系  redis
-//            });
-//        }
+    public static void clearUserIdRedisData(Integer userId){
+        RedisLock lock = new RedisLock(RedisLock.USER_REDIS_LOCK_KEY,String.valueOf(userId));
+        try{
+            lock.multitryLock(2000);
+            logger.info("clearUserIdRedisData userId:"+ userId);
+            //查询是否在聊天室
+            String roomId = UserRelationHashCache.getUserIdRoomIdRelation(userId);
+            if(StringUtils.isNotEmpty(roomId)){
+                //从聊天室中删除这个用户id
+                RoomUserRelationSetCache.removeRoomIdMembers(roomId,userId);
+            }
+            //删除用户连接相关信息
+            UserRelationHashCache.removeUserRelationHash(userId);
+            UserInfoHashCache.removeUserInfoHash(userId);
+        }finally {
+            lock.unlock();
+        }
     }
+
+    /**
+     * 服务关闭的时候,清理redis的数据
+     */
+    public static void clearAllRelationThisHost(){
+        Map<Integer, ChannelHandlerContext> map = ConnectionManager.getCtxMap();
+        if(map!=null){
+            map.keySet().parallelStream().forEach(userId->{
+                clearUserIdRedisData( userId);
+            });
+        }
+    }
+
+
+
 
 
 

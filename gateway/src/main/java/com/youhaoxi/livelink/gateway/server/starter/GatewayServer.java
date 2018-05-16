@@ -1,5 +1,6 @@
 package com.youhaoxi.livelink.gateway.server.starter;
 
+import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
 import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
@@ -94,6 +95,8 @@ public class GatewayServer {
         workGroup.shutdownGracefully();
         //mq连接关闭
         RabbitConnectionManager.getInstance().closeConnection();
+        //连接在本机的所有用户
+        ChatRoomRedisManager.clearAllRelationThisHost();
     }
 
     protected static void bindConnectionOptions(ServerBootstrap bootstrap) {
