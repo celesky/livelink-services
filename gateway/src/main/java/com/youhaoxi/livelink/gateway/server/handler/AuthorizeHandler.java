@@ -2,7 +2,7 @@ package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
-import com.youhaoxi.livelink.gateway.im.ResultBean;
+import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.im.enums.EventType;
 import com.youhaoxi.livelink.gateway.im.event.*;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
@@ -16,8 +16,6 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
 
 /**
  * 通过用户发上来的消息进行
@@ -37,7 +35,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
         //ConnectionManager.channelGroup.writeAndFlush(im.retain());
         logger.debug("userMsg = " + msg.toString());
         //参数检查
-        ResultBean resultBean = paramCheck(msg);
+        ResultMsg resultBean = paramCheck(msg);
         if(resultBean.getCode()!=0) {
             ReferenceCountUtil.release(msg);
             String resultJson = JSON.toJSONString(resultBean);
@@ -67,21 +65,21 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-    private ResultBean paramCheck(IMsgEvent msg) {
+    private ResultMsg paramCheck(IMsgEvent msg) {
         try{
             BaseEvent baseEvent = (BaseEvent)msg;
             if(baseEvent.getHeader()==null){
-                return new ResultBean(100,"header partition not exist");
+                return new ResultMsg(100,"header partition not exist");
             }
-            if(baseEvent.getUser()==null){
-                return new ResultBean(100,"user partition not exist");
+            if(baseEvent.getFrom()==null){
+                return new ResultMsg(100,"user partition not exist");
             }
 
-            return new ResultBean(0,"");
+            return new ResultMsg(0,"");
         }catch (Exception e){
             e.printStackTrace();
             logger.error("paramCheck error!"+e.getMessage(),e);
-            return new ResultBean(-1,"发生错误");
+            return new ResultMsg(-1,"发生错误");
         }
 
     }

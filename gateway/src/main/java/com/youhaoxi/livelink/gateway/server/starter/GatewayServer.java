@@ -5,7 +5,7 @@ import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
 import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.EndpointSender;
 import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.ReceiverThread;
-import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.UpstreamMqDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.MqRstMsgDispatcher;
 import com.youhaoxi.livelink.gateway.im.event.EventJsonParserManager;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
 import io.netty.bootstrap.ServerBootstrap;
@@ -34,7 +34,7 @@ public class GatewayServer {
 //        int port = Integer.parseInt(args[0]);
 
         //启动工作线程组
-        Worker.startWorker(Constants.workerNum, UpstreamMqDispatcher.class, LinkedBlockingDeque.class);
+        Worker.startWorker(Constants.workerNum, MqRstMsgDispatcher.class, LinkedBlockingDeque.class);
         //启动netty
         final GatewayServer endpoint = new GatewayServer();
         ChannelFuture future = endpoint.startup(port);
@@ -68,7 +68,7 @@ public class GatewayServer {
                     //init Registry
                     HandlerManager.initHandlers();
                     EventJsonParserManager.initParsers();
-                    //new ReceiverThread(new EndpointSender()).start();
+                    new ReceiverThread(new EndpointSender()).start();
                     logger.info("[GatewayServer] Started Successed, registry is complete, waiting for client connect...");
                 } else {
                     logger.error("[GatewayServer] Started Failed, registry is incomplete");

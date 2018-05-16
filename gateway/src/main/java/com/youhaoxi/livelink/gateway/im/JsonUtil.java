@@ -17,9 +17,9 @@ public class JsonUtil {
                 .setEventType(EventType.LOGIN);
 
         User user = new User();
-        user.setHeadImg("asdfas")
-                .setName("xdsfa")
-                .setUserId(111);
+//        user.setHeadImg("asdfas")
+//                .setName("xdsfa")
+//                .setUserId(111);
 
         HashMap eventMap = new HashMap();
         eventMap.put("userId",111);
@@ -32,7 +32,7 @@ public class JsonUtil {
 
         Msg msg = new Msg();
         msg.setHeader(header);
-        msg.setUser(user);
+        msg.setFrom(user);
         msg.setEventMap(eventMap) ;
         //msg.event=event;
         String jsonMsg = JSONObject.toJSONString(msg);

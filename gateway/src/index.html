@@ -30,30 +30,178 @@
         function sMessage(msg){
             //alert('server says:' + im);
             var txt =  document.getElementById("chathis").innerHTML;
+            if(txt == "DING"){
+                return;
+            }
             document.getElementById("chathis").innerHTML =txt+'<br>'+msg.data;
-
         }
         function sClose(e){
             var txt =  document.getElementById("chathis").innerHTML;
             document.getElementById("chathis").innerHTML =txt+'<br>'+"connect closed:" + e.code;
         }
-        function Send(){
-            socket.send(document.getElementById("msg").value);
+        function SendLogin(){
+            socket.send(document.getElementById("loginMsg").value);
         }
         function Close(){
             socket.close();
+        }
+
+        function createRoom(){
+            socket.send(document.getElementById("createRoomTxt").value);
+        }
+
+        function joinRoom(){
+            socket.send(document.getElementById("joinRoomTxt").value);
+        }
+        function quitRoom(){
+            socket.send(document.getElementById("quitRoomTxt").value);
+        }
+        function plainMsg(){
+            socket.send(document.getElementById("plainMsgTxt").value);
+        }
+
+        function richMsg(){
+            socket.send(document.getElementById("richMsgTxt").value);
+        }
+        function logout(){
+            socket.send(document.getElementById("logoutTxt").value);
         }
     </script>
 </head>
 
 <body>
-<input id="host" type="text" value="ws://127.0.0.1:8080/ws" style="width: 300px"><button id="connect" onclick="Connect();">Connect</button><br/><br/><br/>
-<input id="msg" type="text"  value="" style="width: 300px">
-
-<button id="send" onclick="Send();">Send</button>
+<input id="host" type="text" value="ws://127.0.0.1:8080/ws" style="width: 300px">
+<button id="connect" onclick="Connect();">Connect</button>
 <button id="close" onclick="Close();">Close</button>
-<div id="chathis">
+<br/><br/><br/>
+<textarea id="loginMsg" type="text"  value="" style="width: 300px;height: 200px">
+1{
+        "sessionId": "sdfafew121fdas",
+        "userId": 222,
+    "header": {
+        "eventType": "LOGIN",
+        "uuid": "sdfsfasdfasf232"
+    },
+    "from": {
+        "img": "asdfas",
+        "name": "xdsfa",
+        "userId": 222
+    }
+}
+</textarea>
+<button id="sendLogin" onclick="SendLogin();">SendLogin</button>
 
+<textarea id="createRoomTxt" type="text"  value="" style="width: 300px;height: 200px">
+2{
+    "msgContent":"hello myname is zhoujielun",
+    "header": {
+        "eventType": "PLAINMSG",
+        "uuid": "adfafafsdfsfaa123132"
+    },
+    "from": {
+        "img": "asdfas",
+        "name": "xdsfa",
+        "userId": 111
+    }
+}
+</textarea>
+<button id="createRoom" onclick="createRoom();">sendMessage</button>
+
+<textarea id="joinRoomTxt" type="text"  value="" style="width: 300px;height: 200px">
+3{
+
+    "msgContent":"hello myname is zhoujielun",
+
+    "header": {
+        "eventType": "PLAINMSG",
+        "uuid": "adfafafsdfsfaa123132"
+    },
+    "from": {
+        "img": "asdfas",
+        "name": "xdsfa",
+        "userId": 111
+    }
+}
+</textarea>
+<button id="joinRoom" onclick="joinRoom();">joinRoom</button>
+
+<textarea id="quitRoomTxt" type="text"  value="" style="width: 300px;height: 200px">
+4{
+    "broadType": "P2P",
+    "receiverUserId": "111",
+    "msgContent":"hello myname is zhoujielun",
+
+    "header": {
+        "eventType": "PLAINMSG",
+        "uuid": "adfafafsdfsfaa123132"
+    },
+    "from": {
+        "img": "asdfas",
+        "name": "xdsfa",
+        "userId": 111
+    }
+}
+</textarea>
+<button id="quitRoom" onclick="quitRoom();">joinRoom</button>
+
+
+<textarea id="plainMsgTxt" type="text"  value="" style="width: 300px;height: 200px">
+5{
+    "broadType": "P2P",
+    "receiverUserId": "111",
+    "msgContent":"hello myname is zhoujielun",
+
+    "header": {
+        "eventType": "PLAINMSG",
+        "uuid": "adfafafsdfsfaa123132"
+    },
+    "from": {
+        "img": "asdfas",
+        "name": "xdsfa",
+        "userId": 111
+    }
+}
+</textarea>
+<button id="plainMsg" onclick="plainMsg();">sendPlainMsg</button>
+
+<textarea id="richMsgTxt" type="text"  value="" style="width: 300px;height: 200px">
+6{
+    "broadType": "P2P",
+    "receiverUserId": "111",
+    "msgContent":"hello myname is zhoujielun",
+
+    "header": {
+        "eventType": "PLAINMSG",
+        "uuid": "adfafafsdfsfaa123132"
+    },
+    "from": {
+        "img": "asdfas",
+        "name": "xdsfa",
+        "userId": 111
+    }
+}
+</textarea>
+<button id="richMsg" onclick="richMsg();">sendRichMsg</button>
+
+
+<textarea id="logoutTxt" type="text"  value="" style="width: 300px;height: 200px">
+7{
+    "header": {
+        "eventType": "PLAINMSG",
+        "uuid": "adfafafsdfsfaa123132"
+    },
+    "from": {
+        "img": "asdfas",
+        "name": "xdsfa",
+        "userId": 111
+    }
+}
+</textarea>
+<button id="logoutMsg" onclick="logout();">logoutMsg</button>
+
+
+<div id="chathis">
+    LOGIN(1),CREATEROOM(2), JOINROOM(3), QUITROOM(4),PLAINMSG(5), RICHMSG(6),LOGOUT(7);
 </div>
 </body>
 

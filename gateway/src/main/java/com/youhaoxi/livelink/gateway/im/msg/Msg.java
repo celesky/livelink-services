@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class Msg implements IMsg,Serializable{
     public Header header;
-    public User user;
+    public User from;
     public IMsgEvent event;
     public HashMap eventMap;//只是用来接收用户的消息事件部分,接收后转换成对应的msgEvent
 
@@ -27,12 +27,12 @@ public class Msg implements IMsg,Serializable{
         return this;
     }
 
-    public User getUser() {
-        return user;
+    public User getFrom() {
+        return from;
     }
 
-    public Msg setUser(User user) {
-        this.user = user;
+    public Msg setFrom(User from) {
+        this.from = from;
         return this;
     }
 
@@ -59,11 +59,10 @@ public class Msg implements IMsg,Serializable{
     public String toString() {
         return "Msg{" +
                 "header=" + header +
-                ", user=" + user +
+                ", from=" + from +
                 ", event=" + event +
                 ", eventMap=" + eventMap +
                 '}';
     }
-
 }
 

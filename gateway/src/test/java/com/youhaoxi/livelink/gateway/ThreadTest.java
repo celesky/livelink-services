@@ -1,26 +1,17 @@
 package com.youhaoxi.livelink.gateway;
 
-import com.sun.jmx.snmp.tasks.ThreadService;
 import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.Dispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
-import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.UpstreamMqDispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.UpstreamMqTestDispatcher;
-import com.youhaoxi.livelink.gateway.im.event.PlainUserMsgEvent;
-import com.youhaoxi.livelink.gateway.im.handler.EventHandler;
-import com.youhaoxi.livelink.gateway.im.handler.IMEventHandler;
-import com.youhaoxi.livelink.gateway.im.handler.PlainMsgEventHandler;
 import com.youhaoxi.livelink.gateway.im.handler.TestEventHandler;
-import com.youhaoxi.livelink.gateway.im.msg.Msg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -30,16 +21,16 @@ public class ThreadTest {
     static volatile boolean contin = true;
 
     public static void test(){
-        Worker.startWorker(Constants.workerNum, UpstreamMqTestDispatcher.class, LinkedBlockingDeque.class);
-        TestEventHandler handler = null;
-        Long start = Instant.now().toEpochMilli();
-        //logger.info("start:"+ start);
-        for(int i=0;i<100000;i++){
-            //logger.info("i:"+ i);
-            handler = new TestEventHandler(null,null);
-            Worker.dispatch(i,handler);
-        }
-        Long end = Instant.now().toEpochMilli();
+//        Worker.startWorker(Constants.workerNum, UpstreamMqTestDispatcher.class, LinkedBlockingDeque.class);
+//        TestEventHandler handler = null;
+//        Long start = Instant.now().toEpochMilli();
+//        //logger.info("start:"+ start);
+//        for(int i=0;i<100000;i++){
+//            //logger.info("i:"+ i);
+//            handler = new TestEventHandler(null,null);
+//            Worker.dispatch(i,handler);
+//        }
+//        Long end = Instant.now().toEpochMilli();
 //        logger.info("end:"+ end);
 //
 //        logger.info("time = " + (end-start)/1000);

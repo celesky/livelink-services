@@ -13,9 +13,9 @@ import com.youhaoxi.livelink.gateway.im.enums.RichMsgType;
  *
  */
 public abstract class UserMsgEvent extends BaseEvent{
-    protected BroadType broadType;//1:群发 2:点对点
-    protected Integer receiverUserId;//接收方用户id  私聊
-    protected String receiveRoomId;//接收方群id  群聊
+    public BroadType broadType;//1:群发 2:点对点
+    public Integer receiverUserId;//接收方用户id  私聊
+    public String receiveRoomId;//接收方群id  群聊
 
     public BroadType getBroadType() {
         return broadType;

@@ -4,17 +4,8 @@ import com.youhaoxi.livelink.gateway.im.enums.EventType;
 
 //登录事件
 public class LoginEvent extends BaseEvent{
-    public Integer userId;
     public String sessionId;
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public LoginEvent setUserId(Integer userId) {
-        this.userId = userId;
-        return this;
-    }
 
     public String getSessionId() {
         return sessionId;
@@ -30,11 +21,5 @@ public class LoginEvent extends BaseEvent{
         return EventType.LOGIN.getValue();
     }
 
-    @Override
-    public String toString() {
-        return "LoginEvent{" +
-                "userId=" + userId +
-                ", sessionId='" + sessionId + '\'' +
-                '}';
-    }
+
 }

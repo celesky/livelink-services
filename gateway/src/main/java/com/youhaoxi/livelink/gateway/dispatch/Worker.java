@@ -1,16 +1,14 @@
 package com.youhaoxi.livelink.gateway.dispatch;
 
 import com.youhaoxi.livelink.gateway.common.Constants;
-import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.UpstreamMqDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.MqRstMsgDispatcher;
 import com.youhaoxi.livelink.gateway.im.handler.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -20,7 +18,8 @@ public class Worker extends Thread {
     private static final Logger logger = LoggerFactory.getLogger(Worker.class);
     public static Worker[] _workers;
     //每个worker绑定一个 dispatcher-->RabbitProducer--->1个rabbitChannel
-    public Dispatcher dispatcher ;
+    public ResultMsgDispatcher dispatcher ;
+
     private static Random rnd = new Random(Constants.workerNum);
 
 
@@ -28,17 +27,17 @@ public class Worker extends Thread {
     private  BlockingQueue<EventHandler> taskQueue ;
 
 
-    public Worker(Dispatcher dispatcher,BlockingQueue<EventHandler> taskQueue){
+    public Worker(ResultMsgDispatcher dispatcher,BlockingQueue<EventHandler> taskQueue){
         this.dispatcher = dispatcher;
         this.taskQueue = taskQueue;
     }
 
 
 
-    public static void  startWorker(int workNum, Class<? extends Dispatcher> dispatcherClazz , Class<? extends BlockingQueue> taskQueueClazz) {
+    public static void  startWorker(int workNum, Class<? extends ResultMsgDispatcher> dispatcherClazz , Class<? extends BlockingQueue> taskQueueClazz) {
         _workers = new Worker[workNum];
         for(int i = 0; i < workNum; i++) {
-            Dispatcher dispatcher = null;
+            ResultMsgDispatcher dispatcher = null;
             BlockingQueue taskQueue = null;
             try {
                 dispatcher = dispatcherClazz.getConstructor().newInstance();
@@ -89,7 +88,7 @@ public class Worker extends Thread {
                 //handler._jedis = AuthStarter.e_redisPoolManager.getJedis();
                 handler.execute(this);
             } catch (Exception e) {
-                logger.error("Caught Exception");
+                logger.error("Caught Exception",e);
             } finally {
 
             }

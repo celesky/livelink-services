@@ -1,10 +1,13 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
+import com.alibaba.fastjson.JSON;
+import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
+import com.youhaoxi.livelink.gateway.common.ClientPushUtil;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.LoginEvent;
-import com.youhaoxi.livelink.gateway.im.msg.Msg;
-import com.youhaoxi.livelink.gateway.util.ChatRoomRedisManager;
+import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
+import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.util.ConnectionManager;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -27,16 +30,19 @@ public class LoginEventHandler extends IMEventHandler {
         boolean valid = checkLogin(loginEvent);
         //登录成功
         if(valid){
-            ctx.writeAndFlush(new TextWebSocketFrame("welcome! 登录成功 "));
+            ResultMsg result = new ResultMsg(100,"登录成功");
+            //ctx.writeAndFlush(new TextWebSocketFrame("welcome! 登录成功 "));
+            ClientPushUtil.writeToClient(ctx,result,loginEvent.from.userId);
 
             //添加到连接管理容器,并设置userId属性到Channel
-            ConnectionManager.addConnection(loginEvent.getUser().getUserId(),ctx);
+            ConnectionManager.addConnection(loginEvent.from.getUserId(),ctx);
             //userId 和host主机映射关系 添加到redis
-            ChatRoomRedisManager.setUserIdHostRelation(loginEvent.getUser().getUserId());
+            UserRelationHashCache.setUserIdHostRelation(loginEvent.from.getUserId());
         }else{
             //非法连接请求
             //关闭连接
-            ctx.writeAndFlush(new TextWebSocketFrame("connect refuse!!! 登录失败! ")).addListener(new ChannelFutureListener() {
+            ResultMsg result = new ResultMsg(200,"登录失败!");
+            ctx.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(result))).addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (!future.isSuccess()) {
@@ -53,7 +59,7 @@ public class LoginEventHandler extends IMEventHandler {
      * @return
      */
     private boolean checkLogin(LoginEvent loginEvent) {
-        if(loginEvent.getUser()==null){
+        if(loginEvent.from==null){
             return false;
         }
         return true;

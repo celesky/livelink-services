@@ -3,9 +3,9 @@ package com.youhaoxi.livelink.gateway.im.msg;
 public class User{
     public Integer userId;
     public String name;
-    public String headImg;
+    public String img;
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
@@ -23,21 +23,12 @@ public class User{
         return this;
     }
 
-    public String getHeadImg() {
-        return headImg;
+    public String getImg() {
+        return img;
     }
 
-    public User setHeadImg(String headImg) {
-        this.headImg = headImg;
+    public User setImg(String img) {
+        this.img = img;
         return this;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", name='" + name + '\'' +
-                ", headImg='" + headImg + '\'' +
-                '}';
     }
 }

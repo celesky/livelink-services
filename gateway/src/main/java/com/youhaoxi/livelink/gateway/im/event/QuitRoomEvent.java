@@ -4,7 +4,6 @@ import com.youhaoxi.livelink.gateway.im.enums.EventType;
 
 //退出聊天室
 public class QuitRoomEvent extends BaseEvent {
-    private Integer userId;
     private String roomId;
 
     @Override
@@ -12,15 +11,7 @@ public class QuitRoomEvent extends BaseEvent {
         return EventType.QUITROOM.getValue();
     }
 
-    @Override
-    public int getUserId() {
-        return userId;
-    }
 
-    public QuitRoomEvent setUserId(Integer userId) {
-        this.userId = userId;
-        return this;
-    }
 
     public String getRoomId() {
         return roomId;
@@ -34,7 +25,7 @@ public class QuitRoomEvent extends BaseEvent {
     @Override
     public String toString() {
         return "QuitRoomEvent{" +
-                "userId=" + userId +
+                "userId=" + super.from.getUserId() +
                 ", roomId='" + roomId + '\'' +
                 '}';
     }

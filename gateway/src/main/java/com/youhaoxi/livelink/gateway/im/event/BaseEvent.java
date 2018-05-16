@@ -3,14 +3,16 @@ package com.youhaoxi.livelink.gateway.im.event;
 import com.youhaoxi.livelink.gateway.im.msg.Header;
 import com.youhaoxi.livelink.gateway.im.msg.User;
 
-public abstract class BaseEvent implements IMsgEvent{
+public abstract class BaseEvent implements IMsgEvent {
 
-    protected Header header;
-    protected User user;
+    public Header header;
+    public User from;
 
-    public int getUserId(){
-        return user.getUserId();
+    @Override
+    public int getUserId() {
+        return from.getUserId();
     }
+
     public Header getHeader() {
         return header;
     }
@@ -20,12 +22,12 @@ public abstract class BaseEvent implements IMsgEvent{
         return this;
     }
 
-    public User getUser() {
-        return user;
+    public User getFrom() {
+        return from;
     }
 
-    public BaseEvent setUser(User user) {
-        this.user = user;
+    public BaseEvent setFrom(User from) {
+        this.from = from;
         return this;
     }
 }

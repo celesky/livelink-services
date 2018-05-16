@@ -12,6 +12,6 @@ public class TestEventHandler extends IMEventHandler{
 
     @Override
     public void execute(Worker worker) {
-         worker.dispatcher.dispatch(msg);
+         //worker.dispatcher.dispatch(msg);
     }
 }

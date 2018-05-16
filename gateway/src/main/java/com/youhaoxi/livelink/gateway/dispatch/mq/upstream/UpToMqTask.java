@@ -1,12 +1,12 @@
 package com.youhaoxi.livelink.gateway.dispatch.mq.upstream;
 
+import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
 import com.youhaoxi.livelink.gateway.im.enums.BroadType;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.PlainUserMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.RichUserMsgEvent;
-import com.youhaoxi.livelink.gateway.im.msg.Msg;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
-import com.youhaoxi.livelink.gateway.util.ChatRoomRedisManager;
+import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ public class UpToMqTask implements Callable<Integer> {
                 //私聊消息
                 //获取对方连接主机的host
                 Integer receiverUserId = plainUserMsgEvent.getReceiverUserId();
-                String host = ChatRoomRedisManager.getUserIdHostRelation(receiverUserId);
+                String host = UserRelationHashCache.getUserIdHostRelation(receiverUserId);
                 //发到host对应的mq
                 logger.info(">>普通消息私聊:"+ plainUserMsgEvent.toString()+" 发送给了用户"+receiverUserId);
                 //producer.publish(host, msg);

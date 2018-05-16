@@ -1,6 +1,6 @@
 package com.youhaoxi.livelink.gateway.server.decoder;
 
-import com.youhaoxi.livelink.gateway.im.JsonMsgPackUtil;
+import com.youhaoxi.livelink.gateway.im.JsonEventPackUtil;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
@@ -23,7 +23,7 @@ public class TextWSFrameToMsgDecoder extends MessageToMessageDecoder<TextWebSock
     @Override
     protected void decode(ChannelHandlerContext ctx, TextWebSocketFrame msg, List<Object> out) throws Exception {
         logger.debug(msg.text());
-        IMsgEvent msgEvent = JsonMsgPackUtil.unPack(msg.text());
+        IMsgEvent msgEvent = JsonEventPackUtil.unPack(msg.text());
         out.add(msgEvent);
     }
 

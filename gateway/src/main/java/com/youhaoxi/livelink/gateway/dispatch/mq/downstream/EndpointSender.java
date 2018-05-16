@@ -1,34 +1,42 @@
 package com.youhaoxi.livelink.gateway.dispatch.mq.downstream;
 
 import com.alibaba.fastjson.JSON;
-import com.youhaoxi.livelink.gateway.im.JsonMsgPackUtil;
-import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
-import com.youhaoxi.livelink.gateway.util.ConnectionManager;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import com.youhaoxi.livelink.gateway.common.ClientPushUtil;
+import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 
 public class EndpointSender implements Sender{
+    private static final Logger logger = LoggerFactory.getLogger(EndpointSender.class);
 
     @Override
     public void send(byte[] body) {
         try {
             //
             String message = new String(body, "UTF-8");
-            IMsgEvent event = JsonMsgPackUtil.unPack(message);
 
-            Integer userId = event.getUserId();
-            String json = JSON.toJSONString(event);
-            writeToClient(userId,json);
+            ResultMsg rmsg = JSON.parseObject(message,ResultMsg.class);
+
+            //下发给dest用户
+            ClientPushUtil.writeToClient(rmsg);
+
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error("EndpointSender 出现UnsupportedEncodingException异常:{}",e);
+        } catch (Exception e){
+            logger.error("EndpointSender 出现Exception异常:{}",e);
         }
 
     }
 
-    public void writeToClient(Integer userId,String json){
-        ChannelHandlerContext ctx = ConnectionManager.getCtxMap().get(userId);
-        ctx.writeAndFlush(new TextWebSocketFrame(json));
+
+    public static void main(String[] args) {
+        String s = " {\"code\":10,\"dest\":{\"userId\":111},\"from\":{\"img\":\"asdfas\",\"name\":\"xdsfa\",\"userId\":222},\"msg\":\"hello myname is zhoujielun\"}\n";
+
+        ResultMsg rmsg = JSON.parseObject(s,ResultMsg.class);
+
+        System.out.println(rmsg);
     }
+
 }
