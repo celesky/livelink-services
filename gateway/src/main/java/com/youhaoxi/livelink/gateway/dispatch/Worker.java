@@ -1,5 +1,6 @@
 package com.youhaoxi.livelink.gateway.dispatch;
 
+import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
 import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.MqRstMsgDispatcher;
 import com.youhaoxi.livelink.gateway.im.handler.EventHandler;
@@ -20,11 +21,12 @@ public class Worker extends Thread {
     //每个worker绑定一个 dispatcher-->RabbitProducer--->1个rabbitChannel
     public ResultMsgDispatcher dispatcher ;
 
-    private static Random rnd = new Random(Constants.workerNum);
-
+    private static Random rnd ;
 
     protected  volatile boolean _stop =false;
     private  BlockingQueue<EventHandler> taskQueue ;
+
+    private static int workerNum;
 
 
     public Worker(ResultMsgDispatcher dispatcher,BlockingQueue<EventHandler> taskQueue){
@@ -35,6 +37,8 @@ public class Worker extends Thread {
 
 
     public static void  startWorker(int workNum, Class<? extends ResultMsgDispatcher> dispatcherClazz , Class<? extends BlockingQueue> taskQueueClazz) {
+        workerNum = workNum;
+        rnd = new Random(workNum);
         _workers = new Worker[workNum];
         for(int i = 0; i < workNum; i++) {
             ResultMsgDispatcher dispatcher = null;
@@ -57,7 +61,7 @@ public class Worker extends Thread {
     }
 
     public static void stopWorkers() {
-        for(int i = 0; i < Constants.workerNum; i++) {
+        for(int i = 0; i < workerNum; i++) {
             _workers[i]._stop = true;
         }
     }
@@ -100,7 +104,7 @@ public class Worker extends Thread {
             //取随机数
             str = rnd.nextInt();
         }
-        return str.hashCode() % Constants.workerNum;
+        return str.hashCode() % workerNum;
     }
 
 

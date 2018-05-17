@@ -3,9 +3,9 @@
 
 	<!--
 		debug<info<warn<Error<Fatal 右边的会写日志,左边不会写
-        <property scope="context" name="logFilePath" value="/data/logs/movie-dubbo-provider" />
+        <property scope="context" name="logFilePath" value="/data/logs/livelink-services" />
     -->
-        <property scope="context" name="logFilePath" value="/Users/pan/myfile/intellij/movie-services/logs" />
+        <property scope="context" name="logFilePath" value="/Users/pan/myfile/intellij/livelink-services/logs" />
 
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -17,7 +17,7 @@
 	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
 	    <file>${logFilePath}/movie-dubbo-provider.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${logFilePath}/movie-dubbo-provider-%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>${logFilePath}/gateway-%d{yyyy-MM-dd}.log</fileNamePattern>
 			<maxHistory>15</maxHistory> 
 		</rollingPolicy>
 		<encoder>

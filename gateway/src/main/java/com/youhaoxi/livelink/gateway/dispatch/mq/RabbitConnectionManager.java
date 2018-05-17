@@ -3,7 +3,9 @@ package com.youhaoxi.livelink.gateway.dispatch.mq;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
 import com.youhaoxi.livelink.gateway.common.Constants;
+import com.youhaoxi.livelink.gateway.common.util.ApplicationContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +45,9 @@ public class RabbitConnectionManager {
     private void initFactory(){
         try {
             factory = new ConnectionFactory();
-            factory.setHost(Constants.RABBIT_HOST);
-            factory.setPort(Constants.RABBIT_PORT);
+            ConfigPropertes configPropertes = ApplicationContextUtil.getBean(ConfigPropertes.class);
+            factory.setHost(configPropertes.RABBIT_HOST);
+            factory.setPort(configPropertes.RABBIT_PORT);
         }catch (Exception e){
             logger.error("RabbitConnectionManager init error:"+e.getMessage(),e);
         }

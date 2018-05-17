@@ -30,7 +30,6 @@ public class PlainMsgEventHandler extends IMEventHandler {
 
         //组织下发消息对象
 
-
         if(msgEvent.getBroadType().getValue() == BroadType.P2P.getValue()){
             ResultMsg rmsg = new ResultMsg(10,msgEvent.msgContent);
             rmsg.setFrom(msgEvent.getFrom());

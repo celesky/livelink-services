@@ -22,13 +22,13 @@ public class UpstreamMqTestDispatcher implements EventDispatcher {
 
         //私聊消息
         //获取对方连接主机的host
-        Integer receiverUserId = 111;
-        String destHost = Constants.RABBIT_HOST;
-        //发到host对应的mq
-        String msg = "hello,你好 fuckyoueveryworld!";
-        //logger.info(">>消息私聊: "+msg+" "+receiverUserId);
-
-        producer.publish(destHost,msg);
+//        Integer receiverUserId = 111;
+//        String destHost = Constants.RABBIT_HOST;
+//        //发到host对应的mq
+//        String msg = "hello,你好 fuckyoueveryworld!";
+//        //logger.info(">>消息私聊: "+msg+" "+receiverUserId);
+//
+//        producer.publish(destHost,msg);
     }
 
     @Override

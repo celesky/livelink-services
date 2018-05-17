@@ -1,7 +1,7 @@
 package com.youhaoxi.livelink.gateway.server.starter;
 
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
-import com.youhaoxi.livelink.gateway.common.Constants;
+import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
 import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.EndpointSender;
@@ -15,17 +15,24 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.LinkedBlockingDeque;
 
+@Component
 public class GatewayServer {
     private static final Logger logger = LoggerFactory.getLogger(GatewayServer.class);
 
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
     private final EventLoopGroup workGroup = new NioEventLoopGroup();
     private Channel channel;
-    private static int port = 8080;
+
+    @Autowired
+    private ConfigPropertes configPropertes;
+
+
 
     public static void main(String[] args) throws Exception {
 //        if (args.length != 1) {
@@ -34,27 +41,29 @@ public class GatewayServer {
 //        }
 //        int port = Integer.parseInt(args[0]);
 
+
+    }
+
+
+    public void startup(){
         //启动工作线程组
-        Worker.startWorker(Constants.workerNum, MqRstMsgDispatcher.class, LinkedBlockingDeque.class);
+        Worker.startWorker(configPropertes.WORK_NUM, MqRstMsgDispatcher.class, LinkedBlockingDeque.class);
         //启动netty
-        final GatewayServer endpoint = new GatewayServer();
-        ChannelFuture future = endpoint.startup(port);
-
-
+        //final GatewayServer endpoint = new GatewayServer();
+        ChannelFuture future = this.boot(configPropertes.SERVER_PORT);
 
         //注册信号监听事件 kill -15
         KillHandler killHandler = new KillHandler();
         killHandler.registerSignal("TERM");
         //jvm关闭钩子线程 做退出资源清理
-        Runtime.getRuntime().addShutdownHook(new Thread(()-> endpoint.destroy()));
+        Runtime.getRuntime().addShutdownHook(new Thread(()-> this.destroy()));
 
         future.channel().closeFuture().syncUninterruptibly();
-
-
     }
 
 
-    public ChannelFuture startup(int port) {
+
+    public ChannelFuture boot(int port) {
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(bossGroup,workGroup)
                 .channel(NioServerSocketChannel.class)
@@ -99,7 +108,7 @@ public class GatewayServer {
         ChatRoomRedisManager.clearAllRelationThisHost();
     }
 
-    protected static void bindConnectionOptions(ServerBootstrap bootstrap) {
+    protected void bindConnectionOptions(ServerBootstrap bootstrap) {
 
         bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
         bootstrap.childOption(ChannelOption.SO_LINGER, 0);
