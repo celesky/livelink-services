@@ -58,7 +58,7 @@
 
 
     <modules>
-        <module>gateway</module>
+        <module>livelink-gateway</module>
     </modules>
 
 </project>
