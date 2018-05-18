@@ -100,6 +100,7 @@ public class ChatRoomRedisManager {
      */
     public static void clearAllRelationThisHost(){
         Map<Integer, ChannelHandlerContext> map = ConnectionManager.getCtxMap();
+        logger.info("clearAllRelationThisHost: 有"+map.size()+" 个用户连接数据需要清理");
         if(map!=null){
             map.keySet().parallelStream().forEach(userId->{
                 clearUserIdRedisData( userId);

@@ -9,7 +9,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.youhaoxi.livechat</groupId>
+	<groupId>com.youhaoxi.livelink</groupId>
 	<artifactId>livelink-gateway</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
