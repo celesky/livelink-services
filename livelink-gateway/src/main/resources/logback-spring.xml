@@ -4,9 +4,10 @@
 	<!--
 		debug<info<warn<Error<Fatal 右边的会写日志,左边不会写
         <property scope="context" name="logFilePath" value="/data/logs/livelink-services" />
+         <property scope="context" name="logFilePath" value="/Users/pan/myfile/intellij/livelink-services/logs" />
     -->
-        <property scope="context" name="logFilePath" value="/Users/pan/myfile/intellij/livelink-services/logs" />
 
+	<property scope="context" name="logFilePath" value="/data/logs/livelink-services" />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -15,9 +16,9 @@
 	</appender>
 	
 	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-	    <file>${logFilePath}/movie-dubbo-provider.log</file>
+	    <file>${logFilePath}/livelink-gateway.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${logFilePath}/gateway-%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>${logFilePath}/livelink-gateway-%d{yyyy-MM-dd}.log</fileNamePattern>
 			<maxHistory>15</maxHistory> 
 		</rollingPolicy>
 		<encoder>
