@@ -2,19 +2,22 @@ package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
 import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
-import com.youhaoxi.livelink.gateway.util.ConnectionManager;
+import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
+import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.*;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 负责连接管理
  */
 public class ConnectionHandler extends ChannelInboundHandlerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionHandler.class);
-
     /**
      *  first
      * @param ctx
@@ -58,6 +61,8 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
             //添加到连接组
             ConnectionManager.channelGroup.add(ctx.channel());
 
+
+
         } else {
             super.userEventTriggered(ctx, evt);
         }
@@ -90,6 +95,8 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
         }
         **/
     }
+
+
 
 
 }

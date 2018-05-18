@@ -10,7 +10,7 @@ import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.StatsEvent;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.im.msg.User;
-import com.youhaoxi.livelink.gateway.util.ConnectionManager;
+import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashMap;

@@ -39,6 +39,7 @@ public class EventJsonParserManager {
 
 
     public static void initParsers() {
+        eventMap.put(EventType.TEST.getValue(),TestEvent.class);
         eventMap.put(EventType.CREATEROOM.getValue(),CreateRoomEvent.class);
         eventMap.put(EventType.LOGIN.getValue(),LoginEvent.class);
         eventMap.put(EventType.LOGOUT.getValue(),LogoutEvent.class);

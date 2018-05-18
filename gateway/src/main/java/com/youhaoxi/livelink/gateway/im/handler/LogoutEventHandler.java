@@ -1,11 +1,10 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
-import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.LogoutEvent;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
-import com.youhaoxi.livelink.gateway.util.ConnectionManager;
+import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

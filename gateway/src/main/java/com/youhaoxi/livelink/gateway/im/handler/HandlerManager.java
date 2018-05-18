@@ -47,6 +47,7 @@ public class HandlerManager {
     }
 
     public static void initHandlers() {
+        HandlerManager.register(EventType.TEST.getValue(), TestEventHandler.class);
         HandlerManager.register(EventType.CREATEROOM.getValue(), CreateRoomEventHandler.class);
         HandlerManager.register(EventType.LOGIN.getValue(), LoginEventHandler.class);
         HandlerManager.register(EventType.LOGOUT.getValue(), LogoutEventHandler.class);

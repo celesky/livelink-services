@@ -7,7 +7,7 @@ import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.LoginEvent;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
-import com.youhaoxi.livelink.gateway.util.ConnectionManager;
+import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
