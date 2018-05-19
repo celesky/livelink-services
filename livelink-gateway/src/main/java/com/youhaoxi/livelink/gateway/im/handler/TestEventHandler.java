@@ -48,7 +48,7 @@ public class TestEventHandler extends IMEventHandler{
             //添加到连接管理容器,并设置userId属性到Channel
             ConnectionManager.addConnection(userId,ctx);
             //userId 和host主机映射关系 添加到redis
-            UserRelationHashCache.setUserIdHostRelation(userId);
+            //UserRelationHashCache.setUserIdHostRelation(userId);
             //给自己发一条提示消息
             ClientPushUtil.writeToClient(ctx,result,userId);
         }
