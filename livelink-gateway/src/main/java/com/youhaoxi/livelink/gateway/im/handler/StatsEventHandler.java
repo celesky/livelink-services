@@ -5,7 +5,7 @@ import com.youhaoxi.livelink.gateway.cache.UserInfoHashCache;
 import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
 import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
 import com.youhaoxi.livelink.gateway.common.util.StringUtils;
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.StatsEvent;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
@@ -23,7 +23,7 @@ public class StatsEventHandler extends IMEventHandler{
     }
 
     @Override
-    public void execute(Worker worker) {
+    public void execute(IWorker worker) {
         StatsEvent msgEvent = (StatsEvent)msg;
         HashMap map = new HashMap();
         Integer action = msgEvent.getAction();

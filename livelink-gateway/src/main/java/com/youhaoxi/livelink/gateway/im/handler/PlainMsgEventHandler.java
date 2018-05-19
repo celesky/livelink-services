@@ -1,6 +1,6 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.MqEventDispatcher;
 import com.youhaoxi.livelink.gateway.im.enums.BroadType;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
@@ -24,7 +24,7 @@ public class PlainMsgEventHandler extends IMEventHandler {
     }
 
     @Override
-    public void execute(Worker woker) {
+    public void execute(IWorker woker) {
         logger.debug(">>>用户普通消息事件处理:"+msg.toString());
         PlainUserMsgEvent msgEvent = (PlainUserMsgEvent)msg;
 
@@ -36,14 +36,14 @@ public class PlainMsgEventHandler extends IMEventHandler {
             rmsg.setDest(new User()
                     .setUserId(msgEvent.getReceiverUserId()));
             rmsg.setTimestamp(msgEvent.getHeader().getDateTime().toEpochSecond(ZoneOffset.of("+8")));//设置时间
-            woker.dispatcher.dispatch(rmsg);
+            woker.getDispatcher().dispatch(rmsg);
 
         }else if( msgEvent.getBroadType().getValue() == BroadType.MASS.getValue()){
             ResultMsg rmsg = new ResultMsg(20,msgEvent.msgContent);
             rmsg.setFrom(msgEvent.getFrom());
             rmsg.setTimestamp(msgEvent.getHeader().getDateTime().toEpochSecond(ZoneOffset.of("+8")));//设置时间
             //群发
-            woker.dispatcher.groupDispatch(rmsg,msgEvent.receiveRoomId);
+            woker.getDispatcher().groupDispatch(rmsg,msgEvent.receiveRoomId);
         }else{
             logger.error("不能识别的broadType:{},msgEvent:{}",msgEvent.broadType,msgEvent.toString());
             return ;

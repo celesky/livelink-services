@@ -3,7 +3,7 @@ package com.youhaoxi.livelink.gateway.im.handler;
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
 import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.LoginEvent;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
@@ -23,7 +23,7 @@ public class LoginEventHandler extends IMEventHandler {
     }
 
     @Override
-    public void execute(Worker woker) {
+    public void execute(IWorker woker) {
         logger.debug(">>>用户登录事件处理:"+msg.toString());
         LoginEvent loginEvent = (LoginEvent)msg;
         boolean valid = checkLogin(loginEvent);

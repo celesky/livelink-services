@@ -4,6 +4,7 @@ import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
 import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
 import com.youhaoxi.livelink.gateway.common.util.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.dispatch.disruptor.DisruptorWorker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
 import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.EndpointSender;
 import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.ReceiverTask;
@@ -59,7 +60,8 @@ public class GatewayServer {
         //初始化配置的netty channel类型
         initServerChannelType();
         //启动工作线程组
-        Worker.startWorker(configPropertes.WORK_NUM, MqRstMsgDispatcher.class, LinkedBlockingDeque.class);
+        //Worker.startWorker(configPropertes.WORK_NUM, MqRstMsgDispatcher.class, LinkedBlockingDeque.class);
+        DisruptorWorker.startWorker(configPropertes.WORK_NUM,MqRstMsgDispatcher.class);
         //启动netty
         //final GatewayServer endpoint = new GatewayServer();
         ChannelFuture future = this.boot(configPropertes.SERVER_PORT);

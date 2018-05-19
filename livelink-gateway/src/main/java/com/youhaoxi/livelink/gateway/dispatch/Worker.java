@@ -1,8 +1,5 @@
 package com.youhaoxi.livelink.gateway.dispatch;
 
-import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
-import com.youhaoxi.livelink.gateway.common.Constants;
-import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.MqRstMsgDispatcher;
 import com.youhaoxi.livelink.gateway.im.handler.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +12,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * 工作线程 做消息派发事情
  */
-public class Worker extends Thread {
+public class Worker extends Thread implements IWorker{
     private static final Logger logger = LoggerFactory.getLogger(Worker.class);
     public static Worker[] _workers;
     //每个worker绑定一个 dispatcher-->RabbitProducer--->1个rabbitChannel
-    public ResultMsgDispatcher dispatcher ;
+    private ResultMsgDispatcher dispatcher ;
 
     private static Random rnd ;
 
@@ -29,9 +26,14 @@ public class Worker extends Thread {
     private static int workerNum;
 
 
-    public Worker(ResultMsgDispatcher dispatcher,BlockingQueue<EventHandler> taskQueue){
+    public Worker(ResultMsgDispatcher dispatcher, BlockingQueue<EventHandler> taskQueue){
         this.dispatcher = dispatcher;
         this.taskQueue = taskQueue;
+    }
+
+    @Override
+    public ResultMsgDispatcher getDispatcher() {
+        return dispatcher;
     }
 
 
@@ -113,6 +115,7 @@ public class Worker extends Thread {
             System.out.println("str = rnd.nextInt(); = " + rnd.nextInt());
         }
     }
+
 
 
 }

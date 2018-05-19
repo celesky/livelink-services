@@ -1,6 +1,6 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.LogoutEvent;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
@@ -18,7 +18,7 @@ public class LogoutEventHandler extends IMEventHandler {
     }
 
     @Override
-    public void execute(Worker woker) {
+    public void execute(IWorker woker) {
         logger.debug(">>>用户登出事件:"+msg.toString());
         LogoutEvent logoutEvent =  (LogoutEvent)msg;
         ConnectionManager.closeConnection(ctx);

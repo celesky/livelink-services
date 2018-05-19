@@ -3,7 +3,7 @@ package com.youhaoxi.livelink.gateway.im.handler;
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
 import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.JoinRoomEvent;
@@ -20,7 +20,7 @@ public class JoinRoomEventHandler  extends IMEventHandler {
     }
 
     @Override
-    public void execute(Worker woker) {
+    public void execute(IWorker woker) {
         JoinRoomEvent event = (JoinRoomEvent)msg;
         //检查房间是否存在
         long count = RoomUserRelationSetCache.getRoomMembersCount(event.getRoomId());
@@ -46,7 +46,7 @@ public class JoinRoomEventHandler  extends IMEventHandler {
 //            }
             String name = event.from.name;
             ResultMsg result = new ResultMsg(40,name+"加入了聊天室");
-            woker.dispatcher.groupDispatch(result,event.getRoomId());
+            woker.getDispatcher().groupDispatch(result,event.getRoomId());
         }else{
             //房间不存在 回复一条错误提示
             ResultMsg result = new ResultMsg(201,"来晚了,请求加入的房间不存在");

@@ -1,12 +1,11 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.QuitRoomEvent;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
-import com.youhaoxi.livelink.gateway.im.msg.User;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,7 @@ public class QuitRoomEventHandler extends IMEventHandler {
     }
 
     @Override
-    public void execute(Worker woker) {
+    public void execute(IWorker woker) {
         logger.debug(">>>用户退出聊天室消息事件处理:"+msg.toString());
         QuitRoomEvent event = (QuitRoomEvent)msg;
         ChatRoomRedisManager.removeUserFromRoom(event.getUserId(),event.getRoomId());
@@ -32,7 +31,7 @@ public class QuitRoomEventHandler extends IMEventHandler {
             String name = event.from.name;
             ResultMsg result = new ResultMsg(40,name+"退出了聊天室");
             result.setRoomId(event.getRoomId());
-            woker.dispatcher.groupDispatch(result,event.getRoomId());
+            woker.getDispatcher().groupDispatch(result,event.getRoomId());
         }
     }
 }

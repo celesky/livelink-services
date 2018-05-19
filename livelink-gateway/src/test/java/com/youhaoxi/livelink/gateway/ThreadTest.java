@@ -1,11 +1,8 @@
 package com.youhaoxi.livelink.gateway;
 
-import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.Dispatcher;
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
 import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.UpstreamMqTestDispatcher;
-import com.youhaoxi.livelink.gateway.im.handler.TestEventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

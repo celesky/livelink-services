@@ -2,7 +2,7 @@ package com.youhaoxi.livelink.gateway.im.handler;
 
 import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
 import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.TestEvent;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestEventHandler extends IMEventHandler{
@@ -35,7 +33,7 @@ public class TestEventHandler extends IMEventHandler{
      * @param worker
      */
     @Override
-    public void execute(Worker worker) {
+    public void execute(IWorker worker) {
         logger.info("握手数:"+ConnectionManager.channelGroup.size()+" 认证通过:"+ConnectionManager.getCtxMap().size());
         TestEvent msgEvent = (TestEvent)msg;
 
@@ -61,7 +59,7 @@ public class TestEventHandler extends IMEventHandler{
         rmsg.setDest(new User()
                 .setUserId(userId));
         rmsg.setTimestamp(msgEvent.getHeader().getDateTime().toEpochSecond(ZoneOffset.of("+8")));//设置时间
-        worker.dispatcher.dispatch(rmsg);
+        worker.getDispatcher().dispatch(rmsg);
 
     }
 
