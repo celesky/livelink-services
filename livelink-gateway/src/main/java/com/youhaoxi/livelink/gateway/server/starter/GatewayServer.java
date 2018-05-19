@@ -2,6 +2,7 @@ package com.youhaoxi.livelink.gateway.server.starter;
 
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
 import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
+import com.youhaoxi.livelink.gateway.common.util.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
 import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.EndpointSender;
@@ -11,8 +12,15 @@ import com.youhaoxi.livelink.gateway.im.event.EventJsonParserManager;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.kqueue.KQueueEventLoopGroup;
+import io.netty.channel.kqueue.KQueueServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.oio.OioEventLoopGroup;
+import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.oio.OioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +34,10 @@ import java.util.concurrent.LinkedBlockingDeque;
 @Component
 public class GatewayServer {
     private static final Logger logger = LoggerFactory.getLogger(GatewayServer.class);
-    private final ExecutorService singleExecutor = Executors.newSingleThreadExecutor();
-    private final EventLoopGroup bossGroup = new NioEventLoopGroup();
-    private final EventLoopGroup workGroup = new NioEventLoopGroup();
+    private  ExecutorService singleExecutor = Executors.newSingleThreadExecutor();
+    private  EventLoopGroup bossGroup = new NioEventLoopGroup();
+    private  EventLoopGroup workGroup = new NioEventLoopGroup();
+    private  Class<? extends ServerSocketChannel> serverSscoketChannelCLazz = NioServerSocketChannel.class ;
     private Channel channel;
 
     @Autowired
@@ -42,27 +51,13 @@ public class GatewayServer {
 //            System.exit(1);
 //        }
 //        int port = Integer.parseInt(args[0]);
-
-
     }
 
-    /**
-     * 读取配置文件中配置的serverchannel类型
-     * @return
-     */
-    private Class serverSocketChannelClazz(){
-        String channelClazz = configPropertes.serverSocketChannel;
-        try {
-            Class clazz = Class.forName(channelClazz);
-            return clazz;
-        } catch (ClassNotFoundException e) {
-            logger.error("serverSocketChannelClazz 异常:{}",e);
-        }
-        //返回默认
-        return NioServerSocketChannel.class;
-    }
+
 
     public void startup(){
+        //初始化配置的netty channel类型
+        initServerChannelType();
         //启动工作线程组
         Worker.startWorker(configPropertes.WORK_NUM, MqRstMsgDispatcher.class, LinkedBlockingDeque.class);
         //启动netty
@@ -83,7 +78,7 @@ public class GatewayServer {
     public ChannelFuture boot(int port) {
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(bossGroup,workGroup)
-                .channel(serverSocketChannelClazz())
+                .channel(serverSscoketChannelCLazz)
                 .childHandler(createInitializer());
 
         ChannelFuture future = bootstrap
@@ -97,7 +92,7 @@ public class GatewayServer {
                     EventJsonParserManager.initParsers();
                     //启动下发任务
                     singleExecutor.submit(new ReceiverTask(new EndpointSender()));
-                    ;
+                    //new Thread(new ReceiverTask(new EndpointSender())).start();
                     logger.info("[GatewayServer] Started Successed, registry is complete, waiting for client connect...");
                 } else {
                     logger.error("[GatewayServer] Started Failed, registry is incomplete");
@@ -125,10 +120,11 @@ public class GatewayServer {
 
         //mq连接关闭
         RabbitConnectionManager.getInstance().closeConnection();
-        //连接在本机的所有用户
-        ChatRoomRedisManager.clearAllRelationThisHost();
         //下发任务关闭
         singleExecutor.shutdown();
+        //连接在本机的所有用户
+        ChatRoomRedisManager.clearAllRelationThisHost();
+
 
         logger.info(">>>清理工作完成,虚拟机退出...");
 
@@ -145,5 +141,44 @@ public class GatewayServer {
 
     }
 
+
+    private void initServerChannelType(){
+        String channelType = configPropertes.CHANNEL_TYPE;
+        if(StringUtils.isBlank(channelType)){
+            channelType="NIO";
+        }
+        switch (channelType){
+            case "NIO": {
+                bossGroup = new NioEventLoopGroup();
+                workGroup = new NioEventLoopGroup();
+                serverSscoketChannelCLazz = NioServerSocketChannel.class;
+                break;
+            }
+            case "EPOLL": {
+                bossGroup = new EpollEventLoopGroup();
+                workGroup = new EpollEventLoopGroup();
+                serverSscoketChannelCLazz = EpollServerSocketChannel.class;
+                break;
+            }
+            case "KQUEUE": {
+                bossGroup = new KQueueEventLoopGroup();
+                workGroup = new KQueueEventLoopGroup();
+                serverSscoketChannelCLazz = KQueueServerSocketChannel.class;
+                break;
+            }
+            case "OIO": {
+                bossGroup = new OioEventLoopGroup();
+                workGroup = new OioEventLoopGroup();
+                serverSscoketChannelCLazz = OioServerSocketChannel.class;
+                break;
+            }
+            default:{
+                bossGroup = new NioEventLoopGroup();
+                workGroup = new NioEventLoopGroup();
+                serverSscoketChannelCLazz = NioServerSocketChannel.class;
+                break;
+            }
+        }
+    }
 
 }

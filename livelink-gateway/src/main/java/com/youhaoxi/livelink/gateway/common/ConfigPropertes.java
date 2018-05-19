@@ -30,7 +30,7 @@ public class ConfigPropertes {
     public int SERVER_PORT =4;
 
 
-    @Value("${server.serverSocketChannel:io.netty.channel.socket.nio.NioServerSocketChannel}")
-    public String serverSocketChannel;
+    @Value("${server.channel_type:NIO}")
+    public String CHANNEL_TYPE;
 
 }
