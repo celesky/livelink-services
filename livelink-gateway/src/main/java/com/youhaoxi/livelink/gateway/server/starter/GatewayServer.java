@@ -97,6 +97,7 @@ public class GatewayServer {
     }
 
     public void destroy() {
+        logger.info(">>>准备开始JVM退出前清理工作...");
         if (channel != null) {
             channel.close();
         }
@@ -106,6 +107,9 @@ public class GatewayServer {
         RabbitConnectionManager.getInstance().closeConnection();
         //连接在本机的所有用户
         ChatRoomRedisManager.clearAllRelationThisHost();
+
+        logger.info(">>>清理工作完成,虚拟机退出...");
+
     }
 
     protected void bindConnectionOptions(ServerBootstrap bootstrap) {
