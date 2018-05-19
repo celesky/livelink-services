@@ -38,9 +38,11 @@ public class RouteHostManager {
         if(routeHostMap.containsKey(userId)){
             routeHostMap.remove(userId);
         }
-
     }
 
+    public static void setUserHost(Integer userId,String host){
+        routeHostMap.put(userId,host);
+    }
 
     public static void clearUserLocalData(Integer userId) {
         remove( userId);
