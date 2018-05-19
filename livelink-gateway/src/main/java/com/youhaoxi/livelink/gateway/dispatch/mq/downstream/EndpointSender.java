@@ -14,11 +14,10 @@ public class EndpointSender implements Sender{
     @Override
     public void send(byte[] body) {
         try {
-            //
+
             String message = new String(body, "UTF-8");
-
+            logger.info("EndpointSender 下发消息:"+message);
             ResultMsg rmsg = JSON.parseObject(message,ResultMsg.class);
-
             //下发给dest用户
             ClientPushUtil.writeToClient(rmsg);
 

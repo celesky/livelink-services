@@ -3,7 +3,7 @@ package com.youhaoxi.livelink.gateway.dispatch.mq.downstream;
 import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConsumer;
 
-public class ReceiverThread extends Thread{
+public class ReceiverTask implements Runnable{
 
     RabbitConsumer rabbitConsumer = new RabbitConsumer();
     String routeKey = Constants.LOCALHOST;
@@ -13,11 +13,11 @@ public class ReceiverThread extends Thread{
 //    private static ExecutorService executorService =
 //            new ThreadPoolExecutor(2,4,60, TimeUnit.SECONDS,new LinkedBlockingDeque<>());
 
-    public ReceiverThread(Sender sender){
+    public ReceiverTask(Sender sender){
         this.sender = sender;
     }
 
-    public ReceiverThread(String routeKey, Sender sender){
+    public ReceiverTask(String routeKey, Sender sender){
         this.routeKey = routeKey;
         this.sender = sender;
     }

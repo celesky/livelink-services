@@ -5,7 +5,7 @@ import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
 import com.youhaoxi.livelink.gateway.dispatch.Worker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
 import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.EndpointSender;
-import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.ReceiverThread;
+import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.ReceiverTask;
 import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.MqRstMsgDispatcher;
 import com.youhaoxi.livelink.gateway.im.event.EventJsonParserManager;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
@@ -19,12 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
 @Component
 public class GatewayServer {
     private static final Logger logger = LoggerFactory.getLogger(GatewayServer.class);
-
+    private final ExecutorService singleExecutor = Executors.newSingleThreadExecutor();
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
     private final EventLoopGroup workGroup = new NioEventLoopGroup();
     private Channel channel;
@@ -44,6 +46,21 @@ public class GatewayServer {
 
     }
 
+    /**
+     * 读取配置文件中配置的serverchannel类型
+     * @return
+     */
+    private Class serverSocketChannelClazz(){
+        String channelClazz = configPropertes.serverSocketChannel;
+        try {
+            Class clazz = Class.forName(channelClazz);
+            return clazz;
+        } catch (ClassNotFoundException e) {
+            logger.error("serverSocketChannelClazz 异常:{}",e);
+        }
+        //返回默认
+        return NioServerSocketChannel.class;
+    }
 
     public void startup(){
         //启动工作线程组
@@ -66,7 +83,7 @@ public class GatewayServer {
     public ChannelFuture boot(int port) {
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(bossGroup,workGroup)
-                .channel(NioServerSocketChannel.class)
+                .channel(serverSocketChannelClazz())
                 .childHandler(createInitializer());
 
         ChannelFuture future = bootstrap
@@ -78,7 +95,9 @@ public class GatewayServer {
                     //init Registry
                     HandlerManager.initHandlers();
                     EventJsonParserManager.initParsers();
-                    new ReceiverThread(new EndpointSender()).start();
+                    //启动下发任务
+                    singleExecutor.submit(new ReceiverTask(new EndpointSender()));
+                    ;
                     logger.info("[GatewayServer] Started Successed, registry is complete, waiting for client connect...");
                 } else {
                     logger.error("[GatewayServer] Started Failed, registry is incomplete");
@@ -103,10 +122,13 @@ public class GatewayServer {
         }
         bossGroup.shutdownGracefully();
         workGroup.shutdownGracefully();
+
         //mq连接关闭
         RabbitConnectionManager.getInstance().closeConnection();
         //连接在本机的所有用户
         ChatRoomRedisManager.clearAllRelationThisHost();
+        //下发任务关闭
+        singleExecutor.shutdown();
 
         logger.info(">>>清理工作完成,虚拟机退出...");
 
