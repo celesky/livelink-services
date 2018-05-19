@@ -5,6 +5,7 @@ import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
 import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
+import com.youhaoxi.livelink.gateway.server.util.RouteHostManager;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
         if(userId!=null){
             //UserRelationHashCache.removeUserIdHostRelation(userId);
             ChatRoomRedisManager.clearUserIdRedisData(userId);
+            RouteHostManager.clearUserLocalData(userId);
         }
 
     }

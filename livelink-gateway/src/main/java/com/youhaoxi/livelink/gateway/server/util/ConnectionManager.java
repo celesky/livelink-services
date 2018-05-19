@@ -10,6 +10,7 @@ import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
@@ -23,6 +24,7 @@ public class ConnectionManager {
     //保存一个gateway上所有的客户端连接  userId-->ChannelHandlerContext
     private static ConcurrentHashMap<Integer, ChannelHandlerContext> ctxMap = new ConcurrentHashMap<>();
     public static AttributeKey<Integer> AK_USER_ID = AttributeKey.valueOf("userId");
+
 
 
     private static void addToCtxMap(Integer userId,ChannelHandlerContext ctx){

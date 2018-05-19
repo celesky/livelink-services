@@ -8,6 +8,7 @@ import com.youhaoxi.livelink.gateway.dispatch.ResultMsgDispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.im.msg.User;
+import com.youhaoxi.livelink.gateway.server.util.RouteHostManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,8 @@ public class MqRstMsgDispatcher implements ResultMsgDispatcher {
 
         //获取对方连接主机的host
         Integer receiverUserId = msg.dest.userId;
-        String destHost = UserRelationHashCache.getUserIdHostRelation(receiverUserId);
+        //String destHost = UserRelationHashCache.getUserIdHostRelation(receiverUserId);
+        String destHost = RouteHostManager.getDestHost(receiverUserId);
         if(!StringUtils.isBlank(destHost)){
             //如果没有时间 则填上当前时间
             if(msg.getTimestamp()==null||msg.getTimestamp().intValue()==0){
