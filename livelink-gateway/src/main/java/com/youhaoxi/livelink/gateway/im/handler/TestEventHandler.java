@@ -36,8 +36,7 @@ public class TestEventHandler extends IMEventHandler{
      */
     @Override
     public void execute(Worker worker) {
-        logger.info("当前握手成功连接数 channGroup.size:"+ConnectionManager.channelGroup.size());
-        logger.info("当前认证通过连接个数 ctx.size:"+ConnectionManager.getCtxMap().size());
+        logger.info("握手数:"+ConnectionManager.channelGroup.size()+" 认证通过:"+ConnectionManager.getCtxMap().size());
         TestEvent msgEvent = (TestEvent)msg;
 
         //int userId = atomicUserId.getAndIncrement();

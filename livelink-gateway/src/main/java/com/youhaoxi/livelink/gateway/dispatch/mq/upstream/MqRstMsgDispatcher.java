@@ -25,7 +25,7 @@ public class MqRstMsgDispatcher implements ResultMsgDispatcher {
     @Override
     public void dispatch(ResultMsg msg) {
         long startIime =  Instant.now().getEpochSecond();
-        logger.info("group chat dispatch start:{}",startIime);
+        //logger.info("group chat dispatch start:{}",startIime);
 
         //获取对方连接主机的host
         Integer receiverUserId = msg.dest.userId;
