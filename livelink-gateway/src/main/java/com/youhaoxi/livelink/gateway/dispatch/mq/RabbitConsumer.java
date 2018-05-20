@@ -1,9 +1,7 @@
 package com.youhaoxi.livelink.gateway.dispatch.mq;
 
 import com.rabbitmq.client.*;
-import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.common.util.NetUtils;
-import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.Sender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,18 +10,19 @@ import java.io.IOException;
 public class RabbitConsumer {
     private static final Logger logger = LoggerFactory.getLogger(RabbitConsumer.class);
 
-    private static final String EXCHANGE_NAME = Constants.EXCHANGE_NAME;
+    private static  String EXCHANGE_NAME ;
     private static Channel channel = RabbitConnectionManager.getInstance().getNewChannel();
     private String queueName;
 
-    private Sender sender;
+    private Processor processor;
 
 
-    public RabbitConsumer(){
+    public RabbitConsumer(String exchange, BuiltinExchangeType type){
         try {
-            channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
+            logger.debug("初始化RabbitConsumer exchange:{} type:{}",exchange,type);
+            EXCHANGE_NAME = exchange;
+            channel.exchangeDeclare(exchange, type);
             queueName = channel.queueDeclare().getQueue();
-
         } catch (IOException e) {
             logger.error("RabbitProducer error:"+e.getMessage(),e);
         }
@@ -42,10 +41,10 @@ public class RabbitConsumer {
                 public void handleDelivery(String consumerTag, Envelope envelope,
                                            AMQP.BasicProperties properties, byte[] body) throws IOException {
                     String message = new String(body, "UTF-8");
-                    logger.debug(" [x] Received '" + envelope.getRoutingKey() + "':'" + message + "'");
+                    logger.debug(" [x] Received routeKey:'" + envelope.getRoutingKey() + "' message:'" + message + "'");
 
                     //下发给用户
-                    sender.send(body);
+                    processor.process(body);
 
                 }
             };
@@ -60,15 +59,15 @@ public class RabbitConsumer {
 
     public static void main(String[] argv) throws Exception {
         String host = NetUtils.getLocalAddress().getHostAddress();
-        new RabbitConsumer().consume(host);
+        //new RabbitConsumer().consume(host);
     }
 
-    public Sender getSender() {
-        return sender;
+    public Processor getProcessor() {
+        return processor;
     }
 
-    public RabbitConsumer setSender(Sender sender) {
-        this.sender = sender;
+    public RabbitConsumer setProcessor(Processor processor) {
+        this.processor = processor;
         return this;
     }
 }

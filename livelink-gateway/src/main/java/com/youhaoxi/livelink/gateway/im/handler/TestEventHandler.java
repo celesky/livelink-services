@@ -9,7 +9,6 @@ import com.youhaoxi.livelink.gateway.im.event.TestEvent;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.im.msg.User;
 import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
-import com.youhaoxi.livelink.gateway.server.util.RouteHostManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
@@ -51,7 +50,7 @@ public class TestEventHandler extends IMEventHandler{
             ConnectionManager.addConnection(userId,ctx);
             //userId 和host主机映射关系 添加到redis
 
-            RouteHostManager.setUserHost(userId, Constants.LOCALHOST);
+            UserRelationHashCache.setUserIdRoomIdRelation(userId, Constants.LOCALHOST);
             //给自己发一条提示消息
             ClientPushUtil.writeToClient(ctx,result,userId);
         }

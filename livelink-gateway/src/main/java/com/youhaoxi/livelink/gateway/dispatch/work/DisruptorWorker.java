@@ -1,4 +1,4 @@
-package com.youhaoxi.livelink.gateway.dispatch.disruptor;
+package com.youhaoxi.livelink.gateway.dispatch.work;
 
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventFactory;
@@ -7,10 +7,12 @@ import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.youhaoxi.livelink.gateway.dispatch.IWorker;
+import com.youhaoxi.livelink.gateway.dispatch.InterMsgDispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.ResultMsgDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.mq.inter.upstream.MqInterMsgDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.work.disruptor.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 import java.util.concurrent.Executor;
@@ -30,13 +32,22 @@ public class DisruptorWorker implements IWorker{
     private static int bufferSize = 1024;
 
     private Disruptor<Element> disruptor;
+    //用户消息派发器
     public ResultMsgDispatcher dispatcher ;
+
+    //内部通信消息派发器
+    public InterMsgDispatcher interDispatcher ;
 
     public DisruptorWorker _self;//自身的引用
 
     @Override
     public ResultMsgDispatcher getDispatcher() {
         return dispatcher;
+    }
+
+    @Override
+    public InterMsgDispatcher getInterMsgDispatcher() {
+        return interDispatcher;
     }
 
     public static void dispatch(Integer userId, com.youhaoxi.livelink.gateway.im.handler.EventHandler handler) {
@@ -63,20 +74,26 @@ public class DisruptorWorker implements IWorker{
     }
 
 
-    public DisruptorWorker(ResultMsgDispatcher dispatcher){
+    public DisruptorWorker(ResultMsgDispatcher dispatcher,InterMsgDispatcher interDispatcher){
+
         this.dispatcher = dispatcher;
+        this.interDispatcher = interDispatcher;
+
         initDisruptor();//初始化disruptor
         _self=this;
     }
 
-    public static void  startWorker(int workNum, Class<? extends ResultMsgDispatcher> dispatcherClazz) {
+    public static void  startWorker(int workNum, Class<? extends ResultMsgDispatcher> dispatcherClazz
+            ,Class<? extends InterMsgDispatcher> interDispatcherClazz) {
         workerNum = workNum;
         rnd = new Random(workNum);
         disruptors = new DisruptorWorker[workNum];//工作组
         for(int i = 0; i < workNum; i++) {
             ResultMsgDispatcher dispatcher = null;
+            InterMsgDispatcher interMsgDispatcher = null;
             try {
                 dispatcher = dispatcherClazz.getConstructor().newInstance();
+                interMsgDispatcher = interDispatcherClazz.getConstructor().newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -86,7 +103,7 @@ public class DisruptorWorker implements IWorker{
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
-            disruptors[i] = new DisruptorWorker(dispatcher);
+            disruptors[i] = new DisruptorWorker(dispatcher,interMsgDispatcher);
             disruptors[i].start();
         }
     }

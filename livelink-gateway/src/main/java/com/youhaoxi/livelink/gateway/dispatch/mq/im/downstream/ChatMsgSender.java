@@ -1,18 +1,19 @@
-package com.youhaoxi.livelink.gateway.dispatch.mq.downstream;
+package com.youhaoxi.livelink.gateway.dispatch.mq.im.downstream;
 
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
+import com.youhaoxi.livelink.gateway.dispatch.mq.Processor;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 
-public class EndpointSender implements Sender{
-    private static final Logger logger = LoggerFactory.getLogger(EndpointSender.class);
+public class ChatMsgSender implements Processor {
+    private static final Logger logger = LoggerFactory.getLogger(ChatMsgSender.class);
 
     @Override
-    public void send(byte[] body) {
+    public void process(byte[] body) {
         try {
 
             String message = new String(body, "UTF-8");

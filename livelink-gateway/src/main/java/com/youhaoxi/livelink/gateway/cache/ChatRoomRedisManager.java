@@ -76,7 +76,7 @@ public class ChatRoomRedisManager {
      * 当用户退出或者断开连接时
      * 清理掉userId在redis中的数据
      */
-    public static void clearUserIdRedisData(Integer userId){
+    public static void clearUserIdCacheData(Integer userId){
         RedisLock lock = new RedisLock(RedisLock.USER_REDIS_LOCK_KEY,String.valueOf(userId));
         try{
             lock.multitryLock(2000);
@@ -103,7 +103,7 @@ public class ChatRoomRedisManager {
         logger.info(">>>准备JVM退出前清理数据clearAllRelationThisHost: 有"+map.size()+" 个用户连接数据需要清理");
         if(map!=null){
             map.keySet().parallelStream().forEach(userId->{
-                clearUserIdRedisData( userId);
+                clearUserIdCacheData( userId);
             });
         }
     }

@@ -6,7 +6,11 @@ public class Constants {
 //    //rabbitMq
 //    public static String RABBIT_HOST ="47.106.140.44";
 //    public static int RABBIT_PORT=5672;
-    public final static String EXCHANGE_NAME = "direct_chat";
+    //聊天消息
+    public final static String CHAT_EXCHANGE_NAME = "direct_chat";
+
+    //内部通讯
+    public final static String INTER_EXCHANGE_NAME = "inter_fanout";
 //
 //
 //    //redis

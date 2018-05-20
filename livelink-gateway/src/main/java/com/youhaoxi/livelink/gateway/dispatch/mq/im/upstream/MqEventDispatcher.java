@@ -1,7 +1,9 @@
-package com.youhaoxi.livelink.gateway.dispatch.mq.upstream;
+package com.youhaoxi.livelink.gateway.dispatch.mq.im.upstream;
 
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
 import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
+import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.common.util.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.EventDispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
@@ -24,7 +26,7 @@ public class MqEventDispatcher implements EventDispatcher {
     private static final ExecutorService groupDispatchExecutor =
             new ThreadPoolExecutor(4,4,60, TimeUnit.SECONDS,new LinkedBlockingDeque<>());
 
-    RabbitProducer producer = new RabbitProducer();
+    RabbitProducer producer = new RabbitProducer(Constants.CHAT_EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
 
 
     //私聊消息
@@ -67,7 +69,7 @@ public class MqEventDispatcher implements EventDispatcher {
         long startIime =  Instant.now().getEpochSecond();
         logger.info("group chat dispatch start:{}",startIime);
         UserMsgEvent userMsgEvent = (UserMsgEvent)msg;
-        long count = RoomUserRelationSetCache.getRoomMemnbersCount(roomId);
+        long count = RoomUserRelationSetCache.getRoomMembersCount(roomId);
         int start = 0;
         int stop = 199;
         int range = 200;

@@ -1,7 +1,7 @@
 package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.alibaba.fastjson.JSON;
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
+import com.youhaoxi.livelink.gateway.dispatch.work.Worker;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.im.enums.EventType;
 import com.youhaoxi.livelink.gateway.im.event.*;

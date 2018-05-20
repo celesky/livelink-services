@@ -1,6 +1,5 @@
-package com.youhaoxi.livelink.gateway.dispatch.disruptor;
+package com.youhaoxi.livelink.gateway.dispatch.work.disruptor;
 
-import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.handler.EventHandler;
 
 /**

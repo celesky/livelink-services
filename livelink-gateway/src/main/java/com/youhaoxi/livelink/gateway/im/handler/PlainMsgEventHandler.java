@@ -1,7 +1,7 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
 import com.youhaoxi.livelink.gateway.dispatch.IWorker;
-import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.MqEventDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.mq.im.upstream.MqEventDispatcher;
 import com.youhaoxi.livelink.gateway.im.enums.BroadType;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.PlainUserMsgEvent;

@@ -3,12 +3,14 @@ package com.youhaoxi.livelink.gateway.server.starter;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
 import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
 import com.youhaoxi.livelink.gateway.common.util.StringUtils;
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
-import com.youhaoxi.livelink.gateway.dispatch.disruptor.DisruptorWorker;
+import com.youhaoxi.livelink.gateway.dispatch.mq.inter.downstream.InterMsgProcessor;
+import com.youhaoxi.livelink.gateway.dispatch.mq.inter.downstream.InterMsgReceiverTask;
+import com.youhaoxi.livelink.gateway.dispatch.mq.inter.upstream.MqInterMsgDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.work.DisruptorWorker;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
-import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.EndpointSender;
-import com.youhaoxi.livelink.gateway.dispatch.mq.downstream.ReceiverTask;
-import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.MqRstMsgDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.mq.im.downstream.ChatMsgSender;
+import com.youhaoxi.livelink.gateway.dispatch.mq.im.downstream.ChatMsgReceiverTask;
+import com.youhaoxi.livelink.gateway.dispatch.mq.im.upstream.MqRstMsgDispatcher;
 import com.youhaoxi.livelink.gateway.im.event.EventJsonParserManager;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
 import io.netty.bootstrap.ServerBootstrap;
@@ -30,12 +32,12 @@ import org.springframework.stereotype.Component;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
 
 @Component
 public class GatewayServer {
     private static final Logger logger = LoggerFactory.getLogger(GatewayServer.class);
-    private  ExecutorService singleExecutor = Executors.newSingleThreadExecutor();
+    private  ExecutorService chatMsgExecutor = Executors.newSingleThreadExecutor();
+    private  ExecutorService interMsgExecutor = Executors.newSingleThreadExecutor();
     private  EventLoopGroup bossGroup = new NioEventLoopGroup();
     private  EventLoopGroup workGroup = new NioEventLoopGroup();
     private  Class<? extends ServerSocketChannel> serverSscoketChannelCLazz = NioServerSocketChannel.class ;
@@ -61,7 +63,7 @@ public class GatewayServer {
         initServerChannelType();
         //启动工作线程组
         //Worker.startWorker(configPropertes.WORK_NUM, MqRstMsgDispatcher.class, LinkedBlockingDeque.class);
-        DisruptorWorker.startWorker(configPropertes.WORK_NUM,MqRstMsgDispatcher.class);
+        DisruptorWorker.startWorker(configPropertes.WORK_NUM,MqRstMsgDispatcher.class, MqInterMsgDispatcher.class);
         //启动netty
         //final GatewayServer endpoint = new GatewayServer();
         ChannelFuture future = this.boot(configPropertes.SERVER_PORT);
@@ -92,8 +94,10 @@ public class GatewayServer {
                     //init Registry
                     HandlerManager.initHandlers();
                     EventJsonParserManager.initParsers();
-                    //启动下发任务
-                    singleExecutor.submit(new ReceiverTask(new EndpointSender()));
+                    //启动聊天信息下发任务
+                    chatMsgExecutor.submit(new ChatMsgReceiverTask(new ChatMsgSender()));
+                    //启动内部消息处理任务
+                    interMsgExecutor.submit(new InterMsgReceiverTask(new InterMsgProcessor()));
                     //new Thread(new ReceiverTask(new EndpointSender())).start();
                     logger.info("[GatewayServer] Started Successed, registry is complete, waiting for client connect...");
                 } else {
@@ -123,7 +127,9 @@ public class GatewayServer {
         //mq连接关闭
         RabbitConnectionManager.getInstance().closeConnection();
         //下发任务关闭
-        singleExecutor.shutdown();
+        chatMsgExecutor.shutdown();
+        //内部消息处理任务关闭
+        interMsgExecutor.shutdown();
         //连接在本机的所有用户
         ChatRoomRedisManager.clearAllRelationThisHost();
 

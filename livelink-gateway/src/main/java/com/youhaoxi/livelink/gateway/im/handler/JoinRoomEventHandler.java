@@ -2,8 +2,11 @@ package com.youhaoxi.livelink.gateway.im.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
+import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
 import com.youhaoxi.livelink.gateway.dispatch.IWorker;
+import com.youhaoxi.livelink.gateway.im.enums.InterMsgType;
+import com.youhaoxi.livelink.gateway.im.msg.InterMsg;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.JoinRoomEvent;
@@ -35,15 +38,17 @@ public class JoinRoomEventHandler  extends IMEventHandler {
             }
 
             ChatRoomRedisManager.addUserToRoom(event.getUserId(),event.getRoomId());
-            //给房间每个人发送一条通知
-            //发送人的用户信息
-            //User user = UserInfoHashCache.getUserInfoFromRedis(event.getUserId());
-//            String name = "";
-//            if(user==null){
-//                name = event.user.name;
-//            }else{
-//                name = user.name;
-//            }
+
+            //传播加入聊天室事件给其他节点服务,同步用户进入房间的状态
+            InterMsg interMsg = new InterMsg();
+            interMsg.setHost(Constants.LOCALHOST)
+                    .setInterMsgType(InterMsgType.joinRoom)
+                    .setUserId(event.from.getUserId())
+                    .setRoomId(event.getRoomId());
+            woker.getInterMsgDispatcher().dispatch(interMsg);
+
+
+            //下发消息
             String name = event.from.name;
             ResultMsg result = new ResultMsg(40,name+"加入了聊天室");
             woker.getDispatcher().groupDispatch(result,event.getRoomId());

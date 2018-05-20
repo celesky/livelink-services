@@ -1,11 +1,13 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
+import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.IWorker;
+import com.youhaoxi.livelink.gateway.im.enums.InterMsgType;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.LogoutEvent;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
+import com.youhaoxi.livelink.gateway.im.msg.InterMsg;
 import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
-import com.youhaoxi.livelink.gateway.server.util.RouteHostManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +26,13 @@ public class LogoutEventHandler extends IMEventHandler {
         ConnectionManager.closeConnection(ctx);
         //UserRelationHashCache.removeUserIdHostRelation(logoutEvent.from.getUserId());
         //redis中清除
-        ChatRoomRedisManager.clearUserIdRedisData(logoutEvent.from.getUserId());
-        //本地缓存清除
-        RouteHostManager.clearUserLocalData(logoutEvent.from.getUserId());
+        ChatRoomRedisManager.clearUserIdCacheData(logoutEvent.from.getUserId());
+
+        //传播断开连接事件给其他节点服务,同步用户下线状态
+        InterMsg interMsg = new InterMsg();
+        interMsg.setHost(Constants.LOCALHOST)
+                .setInterMsgType(InterMsgType.unlinked)
+                .setUserId(logoutEvent.from.getUserId());
+        woker.getInterMsgDispatcher().dispatch(interMsg);
     }
 }

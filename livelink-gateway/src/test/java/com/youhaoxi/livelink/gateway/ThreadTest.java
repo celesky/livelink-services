@@ -2,7 +2,6 @@ package com.youhaoxi.livelink.gateway;
 
 import com.youhaoxi.livelink.gateway.dispatch.Dispatcher;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
-import com.youhaoxi.livelink.gateway.dispatch.mq.upstream.UpstreamMqTestDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

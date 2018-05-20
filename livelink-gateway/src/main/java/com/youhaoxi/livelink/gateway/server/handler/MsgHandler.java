@@ -1,8 +1,7 @@
 package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.alibaba.fastjson.JSONObject;
-import com.youhaoxi.livelink.gateway.dispatch.Worker;
-import com.youhaoxi.livelink.gateway.dispatch.disruptor.DisruptorWorker;
+import com.youhaoxi.livelink.gateway.dispatch.work.DisruptorWorker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
 import com.youhaoxi.livelink.gateway.im.handler.IMEventHandler;

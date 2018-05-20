@@ -16,39 +16,40 @@ import java.io.IOException;
 public class RabbitProducer {
     private static final Logger logger = LoggerFactory.getLogger(RabbitProducer.class);
 
-    private static final String EXCHANGE_NAME = Constants.EXCHANGE_NAME;
+    private static  String exchangeName ;
 
     private Channel channel = RabbitConnectionManager.getInstance().getNewChannel();
 
-    public RabbitProducer(){
+    public RabbitProducer(String exchangeName,BuiltinExchangeType type){
         try {
-            channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
+            this.exchangeName = exchangeName;
+            channel.exchangeDeclare(exchangeName,type);
         } catch (IOException e) {
             logger.error("RabbitProducer error:"+e.getMessage(),e);
         }
     }
 
-    /**
-     * 消息格式
-     * eventType+json
-     * @param routeKey
-     * @param msg
-     */
-    public  void publish(String routeKey,IMsgEvent msg){
-        try {
-            String json = JSON.toJSONString(msg);
-            //String str = msg.getEventType()+json;
-            channel.basicPublish(EXCHANGE_NAME, routeKey, null, json.getBytes("UTF-8"));
-        } catch (IOException e) {
-            logger.error("publish error:"+e.getMessage(),e);
-        }
-    }
+//    /**
+//     * 消息格式
+//     * eventType+json
+//     * @param routeKey
+//     * @param msg
+//     */
+//    public  void publish(String routeKey,IMsgEvent msg){
+//        try {
+//            String json = JSON.toJSONString(msg);
+//            //String str = msg.getEventType()+json;
+//            channel.basicPublish(exchangeName, routeKey, null, json.getBytes("UTF-8"));
+//        } catch (IOException e) {
+//            logger.error("publish error:"+e.getMessage(),e);
+//        }
+//    }
 
     public  void publish(String routeKey,String str){
         try {
             //String json = JSON.toJSONString(msg);
             //logger.debug("publish to routeKey: " + routeKey+" msg:"+str);
-            channel.basicPublish(EXCHANGE_NAME, routeKey, null, str.getBytes("UTF-8"));
+            channel.basicPublish(exchangeName, routeKey, null, str.getBytes("UTF-8"));
         } catch (IOException e) {
             logger.error("publish error:"+e.getMessage(),e);
         }

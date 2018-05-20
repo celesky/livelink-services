@@ -7,7 +7,7 @@
          <property scope="context" name="logFilePath" value="../livelink-services/logs" />
     -->
 
-	<property scope="context" name="logFilePath" value="/data/logs/livelink-services" />
+	<property scope="context" name="logFilePath" value="../livelink-services/logs" />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -29,7 +29,7 @@
        <!--  <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy" /> -->
 	</appender>
 
-	<root level="INFO">
+	<root level="DEBUG">
 		<appender-ref ref="console" />
 		<appender-ref ref="rollingFile" />
 	</root>

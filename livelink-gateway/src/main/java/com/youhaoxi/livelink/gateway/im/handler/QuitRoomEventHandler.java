@@ -1,10 +1,13 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
+import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.dispatch.IWorker;
+import com.youhaoxi.livelink.gateway.im.enums.InterMsgType;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.QuitRoomEvent;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
+import com.youhaoxi.livelink.gateway.im.msg.InterMsg;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -33,5 +36,13 @@ public class QuitRoomEventHandler extends IMEventHandler {
             result.setRoomId(event.getRoomId());
             woker.getDispatcher().groupDispatch(result,event.getRoomId());
         }
+
+        //传播退出聊天室事件给其他节点服务,同步用户退出房间的状态
+        InterMsg interMsg = new InterMsg();
+        interMsg.setHost(Constants.LOCALHOST)
+                .setInterMsgType(InterMsgType.quitRoom)
+                .setUserId(event.from.getUserId())
+                .setRoomId(event.getRoomId());
+        woker.getInterMsgDispatcher().dispatch(interMsg);
     }
 }

@@ -1,5 +1,8 @@
-package com.youhaoxi.livelink.gateway.dispatch;
+package com.youhaoxi.livelink.gateway.dispatch.work;
 
+import com.youhaoxi.livelink.gateway.dispatch.IWorker;
+import com.youhaoxi.livelink.gateway.dispatch.InterMsgDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.ResultMsgDispatcher;
 import com.youhaoxi.livelink.gateway.im.handler.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,29 +10,32 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 工作线程 做消息派发事情
  * 队列使用BlockingQueue
  */
-public class Worker extends Thread implements IWorker{
+public class Worker extends Thread implements IWorker {
     private static final Logger logger = LoggerFactory.getLogger(Worker.class);
     public static Worker[] _workers;
     //每个worker绑定一个 dispatcher-->RabbitProducer--->1个rabbitChannel
     private ResultMsgDispatcher dispatcher ;
+    //内部通信消息派发器
+    public InterMsgDispatcher interDispatcher ;
 
     private static Random rnd ;
 
     protected  volatile boolean _stop =false;
-    private  BlockingQueue<EventHandler> taskQueue ;
+    private  BlockingQueue<EventHandler> taskQueue = new LinkedBlockingDeque<>();
 
     private static int workerNum;
 
 
-    public Worker(ResultMsgDispatcher dispatcher, BlockingQueue<EventHandler> taskQueue){
+    public Worker(ResultMsgDispatcher dispatcher ,InterMsgDispatcher intnerDispatcher){
         this.dispatcher = dispatcher;
-        this.taskQueue = taskQueue;
+        this.interDispatcher = interDispatcher;
     }
 
     @Override
@@ -37,18 +43,23 @@ public class Worker extends Thread implements IWorker{
         return dispatcher;
     }
 
+    @Override
+    public InterMsgDispatcher getInterMsgDispatcher() {
+        return interDispatcher;
+    }
 
 
-    public static void  startWorker(int workNum, Class<? extends ResultMsgDispatcher> dispatcherClazz , Class<? extends BlockingQueue> taskQueueClazz) {
+    public static void  startWorker(int workNum, Class<? extends ResultMsgDispatcher> dispatcherClazz
+            ,Class<? extends InterMsgDispatcher> interDispatcherClazz) {
         workerNum = workNum;
         rnd = new Random(workNum);
         _workers = new Worker[workNum];
         for(int i = 0; i < workNum; i++) {
             ResultMsgDispatcher dispatcher = null;
-            BlockingQueue taskQueue = null;
+            InterMsgDispatcher interMsgDispatcher = null;
             try {
                 dispatcher = dispatcherClazz.getConstructor().newInstance();
-                taskQueue = taskQueueClazz.getConstructor().newInstance();
+                interMsgDispatcher = interDispatcherClazz.getConstructor().newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -58,7 +69,7 @@ public class Worker extends Thread implements IWorker{
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
-            _workers[i] = new Worker(dispatcher,taskQueue);
+            _workers[i] = new Worker(dispatcher,interMsgDispatcher);
             _workers[i].start();
         }
     }

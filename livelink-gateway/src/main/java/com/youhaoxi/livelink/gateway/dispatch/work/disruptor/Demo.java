@@ -1,4 +1,4 @@
-package com.youhaoxi.livelink.gateway.dispatch.disruptor;
+package com.youhaoxi.livelink.gateway.dispatch.work.disruptor;
 
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventFactory;

@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class RabbitConnectionManager {
     private static final Logger logger = LoggerFactory.getLogger(RabbitConnectionManager.class);
-    private static RabbitConnectionManager instance = new RabbitConnectionManager();
+    //private static RabbitConnectionManager instance = new RabbitConnectionManager();
     private static ConnectionFactory factory = new ConnectionFactory();
     private static Connection connection;
 
