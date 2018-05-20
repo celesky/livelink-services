@@ -1,6 +1,10 @@
 package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
+import com.youhaoxi.livelink.gateway.dispatch.work.DisruptorWorker;
+import com.youhaoxi.livelink.gateway.im.event.LogoutEvent;
+import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
+import com.youhaoxi.livelink.gateway.im.handler.IMEventHandler;
 import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
@@ -35,7 +39,12 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
         if(userId!=null){
             //UserRelationHashCache.removeUserIdHostRelation(userId);
             ChatRoomRedisManager.clearUserIdCacheData(userId);
-            //RouteHostManager.clearUserLocalData(userId);
+
+            //和用户logout事件同等处理 这里主动生成一个logoutEvent,派发给worker去处理
+            LogoutEvent msg = new LogoutEvent();
+            msg.getFrom().setUserId(userId);
+            IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
+            DisruptorWorker.dispatch(msg.getUserId(), handler);
         }
 
     }
