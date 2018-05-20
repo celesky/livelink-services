@@ -32,7 +32,7 @@ public class InterMsgProcessor implements Processor {
         try {
 
             String message = new String(body, "UTF-8");
-            logger.info("InterMsgProcessor 收到内部消息:"+message);
+            logger.info("InterMsgProcessor 收到内部状态同步消息:"+message);
             InterMsg msg = JSON.parseObject(message,InterMsg.class);
 
             //如果是当前host发出去的消息,直接忽略(因为目前采用的是fanout模式,自己发出去,自己也会收到刚刚那条消息)
@@ -52,7 +52,15 @@ public class InterMsgProcessor implements Processor {
 
             }else if(msg.getInterMsgType().getValue() == InterMsgType.unlinked.getValue()){//连接断开事件
                 //连接断开事件 移除本地缓存即可
+                String roomId = UserRelationHashCache.getUserIdRoomIdRelation(msg.getUserId());
+                //如果在聊天室 将他从聊天室移除
+                if(StringUtils.isNotEmpty(roomId)){
+                    RoomUserRelationSetCache.removeRoomIdMembersLocal(roomId,msg.getUserId());
+                }
+                //移除用户host映射关系
                 UserRelationHashCache.removeUserIdHostRelationLocal(msg.getUserId());
+                //移除用户与roomId映射
+                UserRelationHashCache.removeUserIdRoomIdRelationLocal(msg.getUserId());
             }else if(msg.getInterMsgType().getValue() == InterMsgType.joinRoom.getValue()){////加入聊天室
 
 
