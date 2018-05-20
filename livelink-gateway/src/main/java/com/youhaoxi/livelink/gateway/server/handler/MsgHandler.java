@@ -45,8 +45,7 @@ public class MsgHandler extends SimpleChannelInboundHandler<IMsgEvent> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {
-        logger.error("报错了!!!!!!!!!!!!!!");
-        cause.printStackTrace();
+        logger.error("报错了!!!!!!!!!!!!!!{}",cause);
         ConnectionManager.closeConnection(ctx);
     }
 
