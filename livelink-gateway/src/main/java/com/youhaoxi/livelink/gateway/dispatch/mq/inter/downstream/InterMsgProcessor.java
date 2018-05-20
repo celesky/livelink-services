@@ -3,6 +3,7 @@ package com.youhaoxi.livelink.gateway.dispatch.mq.inter.downstream;
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
 import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
+import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.common.util.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.mq.Processor;
 import com.youhaoxi.livelink.gateway.im.enums.InterMsgType;
@@ -34,6 +35,10 @@ public class InterMsgProcessor implements Processor {
             logger.info("InterMsgProcessor 收到内部消息:"+message);
             InterMsg msg = JSON.parseObject(message,InterMsg.class);
 
+            //如果是当前host发出去的消息,直接忽略(因为目前采用的是fanout模式,自己发出去,自己也会收到刚刚那条消息)
+            if(Constants.LOCALHOST.equals(msg.getHost())){
+                return;
+            }
 
             //连接事件
             if(msg.getInterMsgType().getValue()== InterMsgType.linked.getValue()){ //连接事件
@@ -49,6 +54,8 @@ public class InterMsgProcessor implements Processor {
                 //连接断开事件 移除本地缓存即可
                 UserRelationHashCache.removeUserIdHostRelationLocal(msg.getUserId());
             }else if(msg.getInterMsgType().getValue() == InterMsgType.joinRoom.getValue()){////加入聊天室
+
+
                 //先判断聊天室redis中是否存在,至少有一个成员
                 long count = RoomUserRelationSetCache.getRoomMembersCount(msg.getRoomId());
                 if(count>0){

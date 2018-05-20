@@ -10,8 +10,9 @@ import java.io.IOException;
 public class RabbitConsumer {
     private static final Logger logger = LoggerFactory.getLogger(RabbitConsumer.class);
 
-    private static  String EXCHANGE_NAME ;
-    private static Channel channel = RabbitConnectionManager.getInstance().getNewChannel();
+
+    private Channel channel = RabbitConnectionManager.getInstance().getNewChannel();
+    private String EXCHANGE_NAME ;
     private String queueName;
 
     private Processor processor;

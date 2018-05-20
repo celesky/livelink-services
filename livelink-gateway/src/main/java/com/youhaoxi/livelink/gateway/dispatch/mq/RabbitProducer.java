@@ -16,9 +16,10 @@ import java.io.IOException;
 public class RabbitProducer {
     private static final Logger logger = LoggerFactory.getLogger(RabbitProducer.class);
 
-    private static  String exchangeName ;
-
     private Channel channel = RabbitConnectionManager.getInstance().getNewChannel();
+
+    private String exchangeName ;
+
 
     public RabbitProducer(String exchangeName,BuiltinExchangeType type){
         try {

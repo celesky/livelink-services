@@ -45,7 +45,7 @@ public class ThreadTest {
 
         List<Dispatcher> dispatcherList = new ArrayList<Dispatcher>();
         for(int i=0;i<4;i++){
-            dispatcherList.add(new UpstreamMqTestDispatcher());
+            //dispatcherList.add(new UpstreamMqTestDispatcher());
             list.add(new AtomicLong(0));
         }
         Long start = Instant.now().toEpochMilli();

@@ -7,7 +7,7 @@
          <property scope="context" name="logFilePath" value="../livelink-services/logs" />
     -->
 
-	<property scope="context" name="logFilePath" value="../livelink-services/logs" />
+	<property scope="context" name="logFilePath" value="/data/logs/livelink-services" />
 
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
