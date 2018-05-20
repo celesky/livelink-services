@@ -5,6 +5,7 @@ import com.youhaoxi.livelink.gateway.dispatch.work.DisruptorWorker;
 import com.youhaoxi.livelink.gateway.im.event.LogoutEvent;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
 import com.youhaoxi.livelink.gateway.im.handler.IMEventHandler;
+import com.youhaoxi.livelink.gateway.im.msg.User;
 import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
@@ -42,7 +43,7 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
 
             //和用户logout事件同等处理 这里主动生成一个logoutEvent,派发给worker去处理
             LogoutEvent msg = new LogoutEvent();
-            msg.getFrom().setUserId(userId);
+            msg.setFrom(new User().setUserId(userId));
             IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
             DisruptorWorker.dispatch(msg.getUserId(), handler);
         }
