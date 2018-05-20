@@ -56,7 +56,7 @@ public class InterMsgProcessor implements Processor {
             }else if(msg.getInterMsgType().getValue() == InterMsgType.joinRoom.getValue()){////加入聊天室
 
 
-                //先判断聊天室redis中是否存在,至少有一个成员
+                //先判断聊天室redis中是否存在,至少有一个成员,如果是刚创建的 也至少有一个房主在里面
                 long count = RoomUserRelationSetCache.getRoomMembersCount(msg.getRoomId());
                 if(count>0){
                     //加入聊天室  需要刷新两个数据

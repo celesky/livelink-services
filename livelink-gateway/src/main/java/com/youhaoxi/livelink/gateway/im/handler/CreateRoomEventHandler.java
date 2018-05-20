@@ -1,12 +1,15 @@
 package com.youhaoxi.livelink.gateway.im.handler;
 
 import com.youhaoxi.livelink.gateway.cache.RoomUserRelationSetCache;
+import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
 import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.dispatch.ResultMsgDispatcher;
+import com.youhaoxi.livelink.gateway.im.enums.InterMsgType;
 import com.youhaoxi.livelink.gateway.im.event.CreateRoomEvent;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
+import com.youhaoxi.livelink.gateway.im.msg.InterMsg;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -24,6 +27,16 @@ public class CreateRoomEventHandler  extends IMEventHandler {
         //创建1个房间
         String roomId = RoomUserRelationSetCache.getNewRoomId();
         ChatRoomRedisManager.addUserToRoom(event.getUserId(),roomId);
+
+
+        //分发事件
+        // 创建聊天室和加入聊天室作为同一种操作 消息给别的节点
+        InterMsg interMsg = new InterMsg();
+        interMsg.setHost(Constants.LOCALHOST)
+                .setInterMsgType(InterMsgType.joinRoom)
+                .setUserId(event.from.getUserId())
+                .setRoomId(roomId);
+        worker.getInterMsgDispatcher().dispatch(interMsg);
 
         ResultMsg result = new ResultMsg(102,"房间创建成功");
         result.setRoomId(roomId);
