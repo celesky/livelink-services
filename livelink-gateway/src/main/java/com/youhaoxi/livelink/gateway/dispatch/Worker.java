@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 工作线程 做消息派发事情
+ * 队列使用BlockingQueue
  */
 public class Worker extends Thread implements IWorker{
     private static final Logger logger = LoggerFactory.getLogger(Worker.class);

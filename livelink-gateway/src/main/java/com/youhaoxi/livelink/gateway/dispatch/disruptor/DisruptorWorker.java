@@ -13,17 +13,21 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 /**
  * 这个使用disruptor做queue,以提高内部queue的效率
- * 而worker使用BlockingQueue
+ *
  */
 public class DisruptorWorker implements IWorker{
+    private static Executor executor = Executors.newCachedThreadPool();
     private static final Logger logger = LoggerFactory.getLogger(DisruptorWorker.class);
     public static DisruptorWorker[] disruptors;
     private static Random rnd ;
     private static int workerNum;
+    private static int bufferSize = 1024;
 
     private Disruptor<Element> disruptor;
     public ResultMsgDispatcher dispatcher ;
@@ -43,15 +47,18 @@ public class DisruptorWorker implements IWorker{
         }
         RingBuffer<Element> ringBuffer = disruptors[workId].disruptor.getRingBuffer();
         // 获取下一个可用位置的下标
-        long sequence = ringBuffer.next();
-        try {
-            // 返回可用位置的元素
-            Element event = ringBuffer.get(sequence);
-            // 设置该位置元素的值
-            event.setValue(handler);
-        } finally {
-            ringBuffer.publish(sequence);
-        }
+//        long sequence = ringBuffer.next();
+//        try {
+//            // 返回可用位置的元素
+//            Element event = ringBuffer.get(sequence);
+//            // 设置该位置元素的值
+//            event.setValue(handler);
+//        } finally {
+//            ringBuffer.publish(sequence);
+//        }
+        //lambada方式写
+        ringBuffer.publishEvent((event, sequence) -> event.setValue(handler));
+
 
     }
 
@@ -88,7 +95,10 @@ public class DisruptorWorker implements IWorker{
         // 阻塞策略
         BlockingWaitStrategy strategy = new BlockingWaitStrategy();
         // 指定RingBuffer的大小
-        int bufferSize = 1024;
+
+
+        //executor 消费者线程池
+        //disruptor = new Disruptor<>(factory, bufferSize, executor);
         // 创建disruptor，采用单生产者模式
         disruptor = new Disruptor(factory, bufferSize, threadFactory, ProducerType.SINGLE, strategy);
         // 设置 处理Event的handler

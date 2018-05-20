@@ -36,9 +36,9 @@ public class UserRelationHashCache {
      * 配置 userId-->host 映射
      * @param userId
      */
-    public static void setUserIdHostRelation(Integer userId){
+    public static void setUserIdHostRelation(Integer userId,String host){
         String key = String.format(USERID_RELATION_HASH_KEY,userId);
-        RedisUtil.cache().hset(key,UserRelationField.LINKHOST,Constants.LOCALHOST);
+        RedisUtil.cache().hset(key,UserRelationField.LINKHOST,host);
     }
 
     /**
