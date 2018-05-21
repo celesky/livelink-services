@@ -34,6 +34,7 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        //ConnectionManager.channelGroup.remove(ctx);//手动移除  其自身也有listener可以自动移除
         //从自定义容器中删除连接对象
         ConnectionManager.closeConnection(ctx);
         Integer userId = ConnectionManager.getUserIdInCtx(ctx);
