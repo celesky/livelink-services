@@ -29,7 +29,7 @@ public class DisruptorWorker implements IWorker{
     public static DisruptorWorker[] disruptors;
     private static Random rnd ;
     private static int workerNum;
-    private static int bufferSize = 1024;
+    private static int bufferSize = 4096;
 
     private Disruptor<Element> disruptor;
     //用户消息派发器
