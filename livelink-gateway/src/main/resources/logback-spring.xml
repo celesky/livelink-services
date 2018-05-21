@@ -29,7 +29,7 @@
        <!--  <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy" /> -->
 	</appender>
 
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="console" />
 		<appender-ref ref="rollingFile" />
 	</root>
