@@ -12,10 +12,6 @@ public class ConfigPropertes {
     @Value("${rabbit.port:5672}")
     public int RABBIT_PORT;
 
-    @Value("${rabbit.exchange_name:direct_chat}")
-    public String EXCHANGE_NAME ;
-
-
     //redis
     @Value("${redis.server:47.106.140.44:5354}")
     public String REDIS_SERVER;
