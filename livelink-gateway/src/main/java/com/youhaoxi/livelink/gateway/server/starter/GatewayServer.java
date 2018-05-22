@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 
 @Component
 public class GatewayServer {
@@ -63,8 +64,8 @@ public class GatewayServer {
         //初始化配置的netty channel类型
         initServerChannelType();
         //启动工作线程组
-        //Worker.startWorker(configPropertes.WORK_NUM, MqRstMsgDispatcher.class, LinkedBlockingDeque.class);
-        DisruptorWorker.startWorker(configPropertes.WORK_NUM,MqRstMsgDispatcher.class, MqInterMsgDispatcher.class);
+        Worker.startWorker(configPropertes.WORK_NUM, MqRstMsgDispatcher.class, MqInterMsgDispatcher.class);
+        //DisruptorWorker.startWorker(configPropertes.WORK_NUM,MqRstMsgDispatcher.class, MqInterMsgDispatcher.class);
         //启动netty
         //final GatewayServer endpoint = new GatewayServer();
         ChannelFuture future = this.boot(configPropertes.SERVER_PORT);
