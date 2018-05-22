@@ -11,6 +11,7 @@ import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
 import com.youhaoxi.livelink.gateway.dispatch.mq.im.downstream.ChatMsgSender;
 import com.youhaoxi.livelink.gateway.dispatch.mq.im.downstream.ChatMsgReceiverTask;
 import com.youhaoxi.livelink.gateway.dispatch.mq.im.upstream.MqRstMsgDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.work.Worker;
 import com.youhaoxi.livelink.gateway.im.event.EventJsonParserManager;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
 import io.netty.bootstrap.ServerBootstrap;
@@ -130,6 +131,10 @@ public class GatewayServer {
         chatMsgExecutor.shutdown();
         //内部消息处理任务关闭
         interMsgExecutor.shutdown();
+
+        DisruptorWorker.shutdown();
+        Worker.shutdown();
+
         //连接在本机的所有用户
         ChatRoomRedisManager.clearAllRelationThisHost();
 

@@ -1,9 +1,6 @@
 package com.youhaoxi.livelink.gateway.dispatch.work;
 
-import com.lmax.disruptor.BlockingWaitStrategy;
-import com.lmax.disruptor.EventFactory;
-import com.lmax.disruptor.EventHandler;
-import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.youhaoxi.livelink.gateway.dispatch.IWorker;
@@ -110,19 +107,19 @@ public class DisruptorWorker implements IWorker{
 
     public Disruptor initDisruptor(){
         // 阻塞策略
-        BlockingWaitStrategy strategy = new BlockingWaitStrategy();
+        //BlockingWaitStrategy strategy = new BlockingWaitStrategy();
         // 指定RingBuffer的大小
 
-
+        SleepingWaitStrategy strategy = new SleepingWaitStrategy();
         //executor 消费者线程池
-        //disruptor = new Disruptor<>(factory, bufferSize, executor);
+        disruptor = new Disruptor<>(factory, bufferSize, executor);
         // 创建disruptor，采用单生产者模式
         disruptor = new Disruptor(factory, bufferSize, threadFactory, ProducerType.SINGLE, strategy);
         // 设置 处理Event的handler
         disruptor.handleEventsWith(new EventHandler<Element>() {
             @Override
             public void onEvent(Element element, long sequence, boolean endOfBatch) {
-                logger.info("disruptor element: " + element.getValue());
+                //logger.info("disruptor element: " + element.getValue());
                 com.youhaoxi.livelink.gateway.im.handler.EventHandler messageHandler = element.getValue();
                 try {
                     assert messageHandler != null;
@@ -166,6 +163,14 @@ public class DisruptorWorker implements IWorker{
         return str.hashCode() % workerNum;
     }
 
+    public static void shutdown(){
+        if(disruptors!=null&&disruptors.length>0){
+            for(int i = 0;i<disruptors.length;i++){
+                disruptors[i].disruptor.shutdown();
+            }
+        }
+
+    }
 
 
 }

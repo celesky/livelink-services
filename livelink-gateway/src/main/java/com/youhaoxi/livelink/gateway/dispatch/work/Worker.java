@@ -9,9 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 工作线程 做消息派发事情
@@ -28,7 +26,7 @@ public class Worker extends Thread implements IWorker {
     private static Random rnd ;
 
     protected  volatile boolean _stop =false;
-    private  BlockingQueue<EventHandler> taskQueue = new LinkedBlockingDeque<>();
+    private  BlockingQueue<EventHandler> taskQueue = new LinkedBlockingDeque<>(2048);
 
     private static int workerNum;
 
@@ -121,12 +119,22 @@ public class Worker extends Thread implements IWorker {
         return str.hashCode() % workerNum;
     }
 
+    public static void shutdown(){
+        if(_workers!=null&&_workers.length>0){
+            for(int i = 0;i<_workers.length;i++){
+                _workers[i]._stop=true;
+            }
+        }
+
+    }
+
 
     public static void main(String[] args) {
         for(int i=0;i<100;i++){
             System.out.println("str = rnd.nextInt(); = " + rnd.nextInt());
         }
     }
+
 
 
 

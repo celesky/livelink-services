@@ -2,6 +2,7 @@ package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.youhaoxi.livelink.gateway.dispatch.work.DisruptorWorker;
+import com.youhaoxi.livelink.gateway.dispatch.work.Worker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
 import com.youhaoxi.livelink.gateway.im.handler.IMEventHandler;
@@ -31,12 +32,12 @@ public class MsgHandler extends SimpleChannelInboundHandler<IMsgEvent> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, IMsgEvent msg) throws Exception {
         //ConnectionManager.channelGroup.writeAndFlush(new TextWebSocketFrame(jsonMsg));
-        logger.info(">>>事件信息调度:"+JSONObject.toJSONString(msg)+" 当前channelGroup:"+ConnectionManager.channelGroup.size());
+        logger.info(">>>netty channelRead事件:"+JSONObject.toJSONString(msg)+" \n当前channelGroup:"+ConnectionManager.channelGroup.size());
         //聊天状态处理
         //将消息交给Woker队列去处理
-//        IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
-//        DisruptorWorker.dispatch(msg.getUserId(), handler);
-
+        IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
+        //DisruptorWorker.dispatch(msg.getUserId(), handler);
+        Worker.dispatch(msg.getUserId(), handler);
     }
 
 
