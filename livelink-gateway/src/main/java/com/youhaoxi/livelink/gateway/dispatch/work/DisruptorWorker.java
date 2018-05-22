@@ -119,7 +119,7 @@ public class DisruptorWorker implements IWorker{
         disruptor.handleEventsWith(new EventHandler<Element>() {
             @Override
             public void onEvent(Element element, long sequence, boolean endOfBatch) {
-                //logger.info("disruptor element: " + element.getValue());
+                logger.info("disruptor element: " + element.getValue());
                 com.youhaoxi.livelink.gateway.im.handler.EventHandler messageHandler = element.getValue();
                 try {
                     assert messageHandler != null;

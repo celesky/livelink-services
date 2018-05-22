@@ -36,8 +36,8 @@ public class MsgHandler extends SimpleChannelInboundHandler<IMsgEvent> {
         //聊天状态处理
         //将消息交给Woker队列去处理
         IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
-        //DisruptorWorker.dispatch(msg.getUserId(), handler);
-        Worker.dispatch(msg.getUserId(), handler);
+        DisruptorWorker.dispatch(msg.getUserId(), handler);
+        //Worker.dispatch(msg.getUserId(), handler);
     }
 
 
