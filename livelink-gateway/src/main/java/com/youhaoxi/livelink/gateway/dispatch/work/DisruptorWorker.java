@@ -107,10 +107,10 @@ public class DisruptorWorker implements IWorker{
 
     public Disruptor initDisruptor(){
         // 阻塞策略
-        //BlockingWaitStrategy strategy = new BlockingWaitStrategy();
+        BlockingWaitStrategy strategy = new BlockingWaitStrategy();
         // 指定RingBuffer的大小
 
-        SleepingWaitStrategy strategy = new SleepingWaitStrategy();
+        //SleepingWaitStrategy strategy = new SleepingWaitStrategy();
         //executor 消费者线程池
         disruptor = new Disruptor<>(factory, bufferSize, executor);
         // 创建disruptor，采用单生产者模式
