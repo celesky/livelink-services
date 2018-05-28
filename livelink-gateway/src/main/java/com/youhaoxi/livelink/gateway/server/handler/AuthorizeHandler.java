@@ -1,6 +1,7 @@
 package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.youhaoxi.livelink.gateway.dispatch.work.DisruptorWorker;
 import com.youhaoxi.livelink.gateway.dispatch.work.Worker;
 import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.im.enums.EventType;
@@ -53,7 +54,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
         //登录事件  鉴权
         if(msg.getEventType()== EventType.LOGIN.getValue()) {
             IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
-            Worker.dispatch(msg.getUserId(), handler);
+            DisruptorWorker.dispatch(msg.getUserId(), handler);
         }else{
             //session检查
             boolean result = checkSession(ctx);

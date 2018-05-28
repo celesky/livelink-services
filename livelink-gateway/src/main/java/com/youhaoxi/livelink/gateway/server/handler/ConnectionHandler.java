@@ -43,17 +43,17 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
 
         logger.info(">>>netty channelInactive 连接断开事件: 当前channelGroup:"+ConnectionManager.channelGroup.size());
 
-//        if(userId!=null){
-//            //UserRelationHashCache.removeUserIdHostRelation(userId);
-//            ChatRoomRedisManager.clearUserIdCacheData(userId);
-//
-//            //和用户logout事件同等处理 这里主动生成一个logoutEvent,派发给worker去处理
-//            LogoutEvent msg = new LogoutEvent();
-//            msg.setFrom(new User().setUserId(userId));
-//            IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
-//            DisruptorWorker.dispatch(msg.getUserId(), handler);
-//            //Worker.dispatch(msg.getUserId(), handler);
-//        }
+        if(userId!=null){
+            //UserRelationHashCache.removeUserIdHostRelation(userId);
+            ChatRoomRedisManager.clearUserIdCacheData(userId);
+
+            //和用户logout事件同等处理 这里主动生成一个logoutEvent,派发给worker去处理
+            LogoutEvent msg = new LogoutEvent();
+            msg.setFrom(new User().setUserId(userId));
+            IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
+            DisruptorWorker.dispatch(msg.getUserId(), handler);
+            //Worker.dispatch(msg.getUserId(), handler);
+        }
 
     }
 
