@@ -35,16 +35,16 @@ public class TestEventHandler extends IMEventHandler{
      */
     @Override
     public void execute(IWorker worker) {
-        logger.info("握手数:"+ConnectionManager.channelGroup.size()+" 认证通过:"+ConnectionManager.getCtxMap().size());
+        long tid = Thread.currentThread().getId();
+        logger.info("当前线程id:{} , execute 目前握手数:{} 认证通过:{}",tid,ConnectionManager.channelGroup.size(),ConnectionManager.getCtxMap().size());
         TestEvent msgEvent = (TestEvent)msg;
 
         //int userId = atomicUserId.getAndIncrement();
-
         Integer userId  = ctx.channel().attr(AK_USER_ID).get();
         if(userId==null){
             //首次连接,设置一个userId
-            userId = atomicUserId.getAndIncrement();
-            ctx.channel().attr(AK_USER_ID).set(userId);
+            logger.info("threadId:{} , execute  userId:{} 首次登录成功",Thread.currentThread().getId(),userId);
+            ctx.channel().attr(AK_USER_ID).set(msgEvent.getUserId());
             ResultMsg result = new ResultMsg(100,userId+"首次登录成功");
             //添加到连接管理容器,并设置userId属性到Channel
             ConnectionManager.addConnection(userId,ctx);

@@ -35,8 +35,8 @@ public class MsgHandler extends SimpleChannelInboundHandler<IMsgEvent> {
         logger.info(">>>netty channelRead事件:"+JSONObject.toJSONString(msg)+" \n当前channelGroup:"+ConnectionManager.channelGroup.size());
         //聊天状态处理
         //将消息交给Woker队列去处理
-//        IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
-//        DisruptorWorker.dispatch(msg.getUserId(), handler);
+        IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
+        DisruptorWorker.dispatch(msg.getUserId(), handler);
         //Worker.dispatch(msg.getUserId(), handler);
     }
 

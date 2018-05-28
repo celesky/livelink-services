@@ -30,7 +30,7 @@ public class RedisUtil {
         if(redisUtil.cache ==null){
             String redisServers = redisUtil.configPropertes.REDIS_SERVER;
             Config_JedisCache jedisCacheConfig = new Config_JedisCache(redisServers, null);
-            jedisCacheConfig.setMaxTotal(10);
+            jedisCacheConfig.setMaxTotal(1000);
             jedisCacheConfig.setMaxIdle(30);
             jedisCacheConfig.setMaxWaitMillis(1000);
             jedisCacheConfig.setTestOnBorrow(true);
