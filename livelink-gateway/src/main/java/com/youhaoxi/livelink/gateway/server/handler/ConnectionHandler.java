@@ -41,7 +41,7 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
         ConnectionManager.closeConnection(ctx);
         Integer userId = ConnectionManager.getUserIdInCtx(ctx);
 
-        logger.info(">>>netty channelInactive 连接断开事件: 当前channelGroup:"+ConnectionManager.channelGroup.size());
+        logger.info(">>>server channelInactive 连接断开事件: 当前channelGroup:"+ConnectionManager.channelGroup.size());
 
         if(userId!=null){
             //UserRelationHashCache.removeUserIdHostRelation(userId);
@@ -68,7 +68,7 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
         //如果是握手成功事件，则从该 Channelipeline 中移除 Http- RequestHandler 因为将不会 接收到任何 HTTP 消息了
         if (evt == WebSocketServerProtocolHandler
                 .ServerHandshakeStateEvent.HANDSHAKE_COMPLETE) {
-            logger.info(">>>netty userEventTriggered事件: 当前channelGroup:"+ConnectionManager.channelGroup.size());
+            logger.info(">>>server userEventTriggered事件: 当前channelGroup:"+ConnectionManager.channelGroup.size());
 
             //ConnectionManager.channelGroup.writeAndFlush(new TextWebSocketFrame("Client " + ctx.channel() + " joined"));
             //添加到连接组

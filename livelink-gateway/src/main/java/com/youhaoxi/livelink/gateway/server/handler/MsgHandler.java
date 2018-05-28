@@ -32,7 +32,7 @@ public class MsgHandler extends SimpleChannelInboundHandler<IMsgEvent> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, IMsgEvent msg) throws Exception {
         //ConnectionManager.channelGroup.writeAndFlush(new TextWebSocketFrame(jsonMsg));
-        logger.info(">>>netty channelRead事件:"+JSONObject.toJSONString(msg)+" \n当前channelGroup:"+ConnectionManager.channelGroup.size());
+        logger.info(">>>server channelRead事件:"+JSONObject.toJSONString(msg)+" \n当前channelGroup:"+ConnectionManager.channelGroup.size());
         //聊天状态处理
         //将消息交给Woker队列去处理
         IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
