@@ -43,14 +43,15 @@ public class TestEventHandler extends IMEventHandler{
         Integer userId  = ctx.channel().attr(AK_USER_ID).get();
         if(userId==null){
             //首次连接,设置一个userId
+            userId = msgEvent.getUserId();
             logger.info("threadId:{} , execute  userId:{} 首次登录成功",Thread.currentThread().getId(),userId);
-            ctx.channel().attr(AK_USER_ID).set(msgEvent.getUserId());
+            ctx.channel().attr(AK_USER_ID).set(userId);
             ResultMsg result = new ResultMsg(100,userId+"首次登录成功");
             //添加到连接管理容器,并设置userId属性到Channel
             ConnectionManager.addConnection(userId,ctx);
             //userId 和host主机映射关系 添加到redis
 
-            UserRelationHashCache.setUserIdRoomIdRelation(userId, Constants.LOCALHOST);
+            UserRelationHashCache.setUserIdHostRelation(userId, Constants.LOCALHOST);
             //给自己发一条提示消息
             ClientPushUtil.writeToClient(ctx,result,userId);
         }
