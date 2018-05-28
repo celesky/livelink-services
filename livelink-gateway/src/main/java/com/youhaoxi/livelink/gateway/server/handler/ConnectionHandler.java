@@ -1,5 +1,6 @@
 package com.youhaoxi.livelink.gateway.server.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
 import com.youhaoxi.livelink.gateway.dispatch.work.DisruptorWorker;
 import com.youhaoxi.livelink.gateway.dispatch.work.Worker;
@@ -39,17 +40,20 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
         //从自定义容器中删除连接对象
         ConnectionManager.closeConnection(ctx);
         Integer userId = ConnectionManager.getUserIdInCtx(ctx);
-        if(userId!=null){
-            //UserRelationHashCache.removeUserIdHostRelation(userId);
-            ChatRoomRedisManager.clearUserIdCacheData(userId);
 
-            //和用户logout事件同等处理 这里主动生成一个logoutEvent,派发给worker去处理
+        logger.info(">>>netty channelInactive 连接断开事件: 当前channelGroup:"+ConnectionManager.channelGroup.size());
+
+//        if(userId!=null){
+//            //UserRelationHashCache.removeUserIdHostRelation(userId);
+//            ChatRoomRedisManager.clearUserIdCacheData(userId);
+//
+//            //和用户logout事件同等处理 这里主动生成一个logoutEvent,派发给worker去处理
 //            LogoutEvent msg = new LogoutEvent();
 //            msg.setFrom(new User().setUserId(userId));
 //            IMEventHandler handler = HandlerManager.getHandler(ctx,msg);
-//            //DisruptorWorker.dispatch(msg.getUserId(), handler);
-//            Worker.dispatch(msg.getUserId(), handler);
-        }
+//            DisruptorWorker.dispatch(msg.getUserId(), handler);
+//            //Worker.dispatch(msg.getUserId(), handler);
+//        }
 
     }
 
@@ -64,6 +68,7 @@ public class ConnectionHandler extends ChannelInboundHandlerAdapter {
         //如果是握手成功事件，则从该 Channelipeline 中移除 Http- RequestHandler 因为将不会 接收到任何 HTTP 消息了
         if (evt == WebSocketServerProtocolHandler
                 .ServerHandshakeStateEvent.HANDSHAKE_COMPLETE) {
+            logger.info(">>>netty userEventTriggered事件: 当前channelGroup:"+ConnectionManager.channelGroup.size());
 
             //ConnectionManager.channelGroup.writeAndFlush(new TextWebSocketFrame("Client " + ctx.channel() + " joined"));
             //添加到连接组
