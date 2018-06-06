@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+<bean id="userJedisProviderFactory" class="com.youhaoxi.base.jedis.JedisProviderFactoryBean">
+		<property name="jedisPoolConfig">
+			<bean class="redis.clients.jedis.JedisPoolConfig">
+				<property name="maxTotal" value="${redis.pool.maxTotal}" />
+				<property name="maxIdle" value="${redis.pool.maxIdle}" />
+				<property name="minIdle" value="${redis.pool.minIdle}" />
+			</bean>
+		</property>
+		<!-- mode(standard:标准模式，cluster：集群模式，shard：分片模式) -->
+		<property name="mode" value="${redis.mode}" />
+		<!-- 多个用“,”隔开 -->
+		<property name="servers" value="${redis.servers}" />
+		<property name="timeout" value="${redis.conn.timeout}" />
+	</bean>
+
+
+</beans>

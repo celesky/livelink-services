@@ -1,19 +1,7 @@
-package com.youhaoxi.livelink.gateway.server.starter;
+package com.youhaoxi.livelink.dispatch.server.starter;
 
-import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
-import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
-import com.youhaoxi.livelink.gateway.common.util.StringUtils;
-import com.youhaoxi.livelink.gateway.dispatch.mq.inter.downstream.InterMsgProcessor;
-import com.youhaoxi.livelink.gateway.dispatch.mq.inter.downstream.InterMsgReceiverTask;
-import com.youhaoxi.livelink.gateway.dispatch.mq.inter.upstream.MqInterMsgDispatcher;
-import com.youhaoxi.livelink.gateway.dispatch.work.DisruptorWorker;
-import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitConnectionManager;
-import com.youhaoxi.livelink.gateway.dispatch.mq.im.downstream.ChatMsgSender;
-import com.youhaoxi.livelink.gateway.dispatch.mq.im.downstream.ChatMsgReceiverTask;
-import com.youhaoxi.livelink.gateway.dispatch.mq.im.upstream.MqRstMsgDispatcher;
-import com.youhaoxi.livelink.gateway.dispatch.work.Worker;
-import com.youhaoxi.livelink.gateway.im.event.EventJsonParserManager;
-import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
+import com.youhaoxi.livelink.dispatch.common.ConfigPropertes;
+import com.youhaoxi.livelink.protocol.protobuf.demo.HelloWorldProto;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.EpollEventLoopGroup;
@@ -25,6 +13,7 @@ import io.netty.channel.oio.OioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.oio.OioServerSocketChannel;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +22,10 @@ import org.springframework.stereotype.Component;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
 
 @Component
-public class GatewayServer {
-    private static final Logger logger = LoggerFactory.getLogger(GatewayServer.class);
+public class DispatchServer {
+    private static final Logger logger = LoggerFactory.getLogger(DispatchServer.class);
     private  ExecutorService chatMsgExecutor = Executors.newSingleThreadExecutor();
     private  ExecutorService interMsgExecutor = Executors.newSingleThreadExecutor();
     private  EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -65,7 +53,7 @@ public class GatewayServer {
         initServerChannelType();
         //启动工作线程组
         //Worker.startWorker(configPropertes.WORK_NUM, MqRstMsgDispatcher.class, MqInterMsgDispatcher.class);
-        DisruptorWorker.startWorker(configPropertes.WORK_NUM,MqRstMsgDispatcher.class, MqInterMsgDispatcher.class);
+        //DisruptorWorker.startWorker(configPropertes.WORK_NUM,MqRstMsgDispatcher.class, MqInterMsgDispatcher.class);
         //启动netty
         //final GatewayServer endpoint = new GatewayServer();
         ChannelFuture future = this.boot(configPropertes.SERVER_PORT);
@@ -89,24 +77,24 @@ public class GatewayServer {
 
         ChannelFuture future = bootstrap
                 .bind(new InetSocketAddress(port)).addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future)
-                    throws Exception {
-                if (future.isSuccess()) {
-                    //init Registry
-                    HandlerManager.initHandlers();
-                    EventJsonParserManager.initParsers();
-                    //启动聊天信息下发任务
-                    chatMsgExecutor.submit(new ChatMsgReceiverTask(new ChatMsgSender()));
-                    //启动内部消息处理任务
-                    interMsgExecutor.submit(new InterMsgReceiverTask(new InterMsgProcessor()));
-                    //new Thread(new ReceiverTask(new EndpointSender())).start();
-                    logger.info("[GatewayServer] Started Successed, registry is complete, waiting for starter connect...");
-                } else {
-                    logger.error("[GatewayServer] Started Failed, registry is incomplete");
-                }
-            }
-        });
+                    @Override
+                    public void operationComplete(ChannelFuture future)
+                            throws Exception {
+                        if (future.isSuccess()) {
+                            //init Registry
+                            //HandlerManager.initHandlers();
+                            //EventJsonParserManager.initParsers();
+                            //启动聊天信息下发任务
+                            //chatMsgExecutor.submit(new ChatMsgReceiverTask(new ChatMsgSender()));
+                            //启动内部消息处理任务
+                            //interMsgExecutor.submit(new InterMsgReceiverTask(new InterMsgProcessor()));
+                            //new Thread(new ReceiverTask(new EndpointSender())).start();
+                            logger.info("[DispatchServer] Started Successed, registry is complete, waiting for starter connect...");
+                        } else {
+                            logger.error("[DispatchServer] Started Failed, registry is incomplete");
+                        }
+                    }
+                });
 
         future.syncUninterruptibly();
         channel = future.channel();
@@ -114,8 +102,9 @@ public class GatewayServer {
     }
 
     protected ChannelInitializer<Channel> createInitializer() {
-        return new ChatServerInitializer();
+        //return new ChatServerInitializer();
         //return new DemoInitializer();
+        return new ProtobufInitializer();
     }
 
     public void destroy() {
@@ -127,18 +116,17 @@ public class GatewayServer {
         workGroup.shutdownGracefully();
 
         //mq连接关闭
-        RabbitConnectionManager.getInstance().closeConnection();
+        //RabbitConnectionManager.getInstance().closeConnection();
         //下发任务关闭
-        chatMsgExecutor.shutdown();
+        //chatMsgExecutor.shutdown();
         //内部消息处理任务关闭
-        interMsgExecutor.shutdown();
+        //interMsgExecutor.shutdown();
 
-        DisruptorWorker.shutdown();
-        Worker.shutdown();
+        //DisruptorWorker.shutdown();
+        //Worker.shutdown();
 
         //连接在本机的所有用户
-        ChatRoomRedisManager.clearAllRelationThisHost();
-
+        //ChatRoomRedisManager.clearAllRelationThisHost();
 
         logger.info(">>>清理工作完成,虚拟机退出...");
 
@@ -154,7 +142,6 @@ public class GatewayServer {
         bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true); //心跳机制暂时使用TCP选项，之后再自己实现
 
     }
-
 
     private void initServerChannelType(){
         String channelType = configPropertes.CHANNEL_TYPE;
@@ -194,5 +181,4 @@ public class GatewayServer {
             }
         }
     }
-
 }

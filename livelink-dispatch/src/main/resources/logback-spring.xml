@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<!--
+		debug<info<warn<Error<Fatal 右边的会写日志,左边不会写
+        <property scope="context" name="logFilePath" value="/data/logs/livelink-services" />
+         <property scope="context" name="logFilePath" value="../livelink-services/logs" />
+    -->
+
+	<property scope="context" name="logFilePath" value="../livelink-services/logs" />
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d %X{userId} %X{req.requestURI} [%t] %-5p [%c:%L] - %m%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	    <file>${logFilePath}/livelink-gateway.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logFilePath}/livelink-dispatch-%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>15</maxHistory> 
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d %X{userId} %X{req.requestURI} [%t] %-5p [%c:%L] - %m%n</pattern>
+		</encoder>
+		<append>true</append>  
+   		<prudent>false</prudent>  
+       <!--  <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy" /> -->
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="console" />
+		<appender-ref ref="rollingFile" />
+	</root>
+
+</configuration>

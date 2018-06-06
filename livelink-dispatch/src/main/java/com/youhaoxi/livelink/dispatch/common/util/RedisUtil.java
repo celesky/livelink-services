@@ -1,7 +1,7 @@
-package com.youhaoxi.livelink.gateway.common.util;
+package com.youhaoxi.livelink.dispatch.common.util;
 
 import com.youhaoxi.base.jedis.client.RedisCluster;
-import com.youhaoxi.livelink.gateway.common.ConfigPropertes;
+import com.youhaoxi.livelink.dispatch.common.ConfigPropertes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,4 +36,3 @@ public class RedisUtil {
 
 
 }
-
