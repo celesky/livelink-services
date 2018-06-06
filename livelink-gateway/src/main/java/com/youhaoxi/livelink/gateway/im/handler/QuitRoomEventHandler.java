@@ -7,8 +7,8 @@ import com.youhaoxi.livelink.gateway.im.enums.InterMsgType;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.QuitRoomEvent;
 import com.youhaoxi.livelink.gateway.cache.ChatRoomRedisManager;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.im.msg.InterMsg;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class QuitRoomEventHandler extends IMEventHandler {
         }else{
             //给群发送群通知
             String name = event.from.name;
-            ResultMsg result = new ResultMsg(40,name+"退出了聊天室");
+            EndpointMsg result = new EndpointMsg(40,name+"退出了聊天室");
             result.setRoomId(event.getRoomId());
             woker.getDispatcher().groupDispatch(result,event.getRoomId());
         }

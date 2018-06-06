@@ -2,8 +2,7 @@ package com.youhaoxi.livelink.gateway.server.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.dispatch.work.DisruptorWorker;
-import com.youhaoxi.livelink.gateway.dispatch.work.Worker;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.im.enums.EventType;
 import com.youhaoxi.livelink.gateway.im.event.*;
 import com.youhaoxi.livelink.gateway.im.handler.HandlerManager;
@@ -36,7 +35,7 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
         //ConnectionManager.channelGroup.writeAndFlush(im.retain());
         logger.debug("userMsg = " + msg.toString());
         //参数检查
-        ResultMsg resultBean = paramCheck(msg);
+        EndpointMsg resultBean = paramCheck(msg);
         if(resultBean.getCode()!=0) {
             ReferenceCountUtil.release(msg);
             String resultJson = JSON.toJSONString(resultBean);
@@ -66,21 +65,21 @@ public class AuthorizeHandler extends ChannelInboundHandlerAdapter {
 
     }
 
-    private ResultMsg paramCheck(IMsgEvent msg) {
+    private EndpointMsg paramCheck(IMsgEvent msg) {
         try{
             BaseEvent baseEvent = (BaseEvent)msg;
             if(baseEvent.getHeader()==null){
-                return new ResultMsg(100,"header partition not exist");
+                return new EndpointMsg(100,"header partition not exist");
             }
             if(baseEvent.getFrom()==null){
-                return new ResultMsg(100,"user partition not exist");
+                return new EndpointMsg(100,"user partition not exist");
             }
 
-            return new ResultMsg(0,"");
+            return new EndpointMsg(0,"");
         }catch (Exception e){
             e.printStackTrace();
             logger.error("paramCheck error!"+e.getMessage(),e);
-            return new ResultMsg(-1,"发生错误");
+            return new EndpointMsg(-1,"发生错误");
         }
 
     }

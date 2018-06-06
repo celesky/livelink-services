@@ -1,4 +1,4 @@
-package com.youhaoxi.livelink.gateway.dispatch.mq.im.upstream;
+package com.youhaoxi.livelink.gateway.dispatch.client.upstream;
 
 import com.alibaba.fastjson.JSON;
 import com.rabbitmq.client.BuiltinExchangeType;
@@ -7,9 +7,11 @@ import com.youhaoxi.livelink.gateway.cache.UserRelationHashCache;
 import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.common.util.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.ResultMsgDispatcher;
+import com.youhaoxi.livelink.gateway.dispatch.client.DispatchConnManager;
 import com.youhaoxi.livelink.gateway.dispatch.mq.RabbitProducer;
 import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.im.msg.User;
+import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,72 +21,33 @@ import java.util.List;
 /**
  * 终端消息派发
  */
-public class MqRstMsgDispatcher implements ResultMsgDispatcher {
-    private static final Logger logger = LoggerFactory.getLogger(MqRstMsgDispatcher.class);
+public class EndpointMsgDispatcher implements ResultMsgDispatcher {
+    private static final Logger logger = LoggerFactory.getLogger(EndpointMsgDispatcher.class);
 //    private static final ExecutorService groupDispatchExecutor =
 //            new ThreadPoolExecutor(4,4,60, TimeUnit.SECONDS,new LinkedBlockingDeque<>());
 
-    RabbitProducer producer = new RabbitProducer(Constants.CHAT_EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
 
-
+    /**
+     * todo 使用protobuf重新定义
+     * @param msg
+     */
     @Override
     public void dispatch(EndpointMsg msg) {
-        long startIime =  Instant.now().getEpochSecond();
-        //logger.info("group chat dispatch start:{}",startIime);
-
-        //获取对方连接主机的host
-        Integer receiverUserId = msg.dest.userId;
-        String destHost = UserRelationHashCache.getUserIdHostRelation(receiverUserId);
-        //String destHost = RouteHostManager.getDestHost(receiverUserId);
-        if(!StringUtils.isBlank(destHost)){
-            //如果没有时间 则填上当前时间
-            if(msg.getTimestamp()==null||msg.getTimestamp().intValue()==0){
-                msg.setTimestamp(Instant.now().toEpochMilli());
-            }
-            //发到host对应的mq
-            logger.info(">>消息私聊: userId:{},destHost:{},已推送mq,msg:{}",receiverUserId,destHost,msg.toString());
-            producer.publish(destHost, JSON.toJSONString(msg));
-        }else{
-            logger.info(">>消息私聊: userId:{},destHost:{},用户不在线,msg:{}",receiverUserId,destHost,msg.toString());
-
-        }
+        ChannelHandlerContext ctx = DispatchConnManager.getOneConnRamdom();
+        //发送到dispatch端
+        ctx.writeAndFlush(msg);
     }
 
-
+    /**
+     * todo 使用protobuf重新定义
+     * @param msg
+     * @param roomId
+     */
     @Override
     public void groupDispatch(EndpointMsg msg, String roomId) {
-        long startIime =  Instant.now().getEpochSecond();
-        logger.info("group chat dispatch start:{}",startIime);
-        //先看房间是否还存在
-        List<Integer> list = RoomUserRelationSetCache.getAllRoomMemnbersLocal(roomId);
-        if(list!=null&&list.size()>0){
-            list.parallelStream().forEach(userId->{
-                //用户连接在的主机
-                String destHost = UserRelationHashCache.getUserIdHostRelation(userId);
-                //设置接收目标的userId
-                if(msg.getDest()==null){
-                    User dest = new User();
-                    dest.setUserId(userId);
-                    msg.setDest(dest);
-                }else{
-                    msg.getDest().setUserId(userId);
-                }
-
-                //如果没有时间 则填上当前时间
-                if(msg.getTimestamp()==null||msg.getTimestamp().intValue()==0){
-                    msg.setTimestamp(Instant.now().toEpochMilli());
-                }
-
-                String json = JSON.toJSONString(msg);
-                producer.publish(destHost, json);
-            });
-        }else{
-            logger.info("groupDispatch 房间不存在或者已经没有人在了 roomId{}",roomId);
-        }
-
-        long endTime =  Instant.now().getEpochSecond();
-        logger.info("group chat dispatch end:{}",endTime);
-        logger.info("group chat dispatch exhaust:{}",(endTime-startIime));
+        ChannelHandlerContext ctx = DispatchConnManager.getOneConnRamdom();
+        //发送到dispatch端
+        ctx.writeAndFlush(msg);
     }
 
     /**

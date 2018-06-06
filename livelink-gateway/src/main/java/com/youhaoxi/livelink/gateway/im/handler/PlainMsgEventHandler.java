@@ -5,7 +5,7 @@ import com.youhaoxi.livelink.gateway.dispatch.mq.im.upstream.MqEventDispatcher;
 import com.youhaoxi.livelink.gateway.im.enums.BroadType;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.PlainUserMsgEvent;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.im.msg.User;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class PlainMsgEventHandler extends IMEventHandler {
         //组织下发消息对象
 
         if(msgEvent.getBroadType().getValue() == BroadType.P2P.getValue()){
-            ResultMsg rmsg = new ResultMsg(10,msgEvent.msgContent);
+            EndpointMsg rmsg = new EndpointMsg(10,msgEvent.msgContent);
             rmsg.setFrom(msgEvent.getFrom());
             rmsg.setDest(new User()
                     .setUserId(msgEvent.getReceiverUserId()));
@@ -39,7 +39,7 @@ public class PlainMsgEventHandler extends IMEventHandler {
             woker.getDispatcher().dispatch(rmsg);
 
         }else if( msgEvent.getBroadType().getValue() == BroadType.MASS.getValue()){
-            ResultMsg rmsg = new ResultMsg(20,msgEvent.msgContent);
+            EndpointMsg rmsg = new EndpointMsg(20,msgEvent.msgContent);
             rmsg.setFrom(msgEvent.getFrom());
             rmsg.setTimestamp(msgEvent.getHeader().getDateTime().toEpochSecond(ZoneOffset.of("+8")));//设置时间
             //群发

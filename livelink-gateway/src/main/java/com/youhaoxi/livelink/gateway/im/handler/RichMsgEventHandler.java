@@ -5,7 +5,7 @@ import com.youhaoxi.livelink.gateway.im.enums.BroadType;
 import com.youhaoxi.livelink.gateway.im.enums.RichMsgType;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.RichUserMsgEvent;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.im.msg.User;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -28,13 +28,13 @@ public class RichMsgEventHandler extends IMEventHandler {
         RichUserMsgEvent msgEvent = (RichUserMsgEvent)msg;
 
         //组织下发消息对象
-        ResultMsg rmsg ;
+        EndpointMsg rmsg ;
         //礼物类型
         if(msgEvent.richMsgType.getValue()== RichMsgType.GIFT.getValue()){
-            rmsg = new ResultMsg(30,"礼物消息");
+            rmsg = new EndpointMsg(30,"礼物消息");
         }else if(msgEvent.richMsgType.getValue()== RichMsgType.PROP.getValue()){
             //道具类型
-            rmsg = new ResultMsg(20,"道具消息");
+            rmsg = new EndpointMsg(20,"道具消息");
         }else{
             logger.error("不能识别的RichMsgType:{},richMsgEvent:{}",msgEvent.richMsgType,msgEvent.toString());
             return ;

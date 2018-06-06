@@ -8,8 +8,8 @@ import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.im.enums.InterMsgType;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.LoginEvent;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.im.msg.InterMsg;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -32,7 +32,7 @@ public class LoginEventHandler extends IMEventHandler {
         boolean valid = checkLogin(loginEvent);
         //登录成功
         if(valid){
-            ResultMsg result = new ResultMsg(100,"登录成功");
+            EndpointMsg result = new EndpointMsg(100,"登录成功");
             //ctx.writeAndFlush(new TextWebSocketFrame("welcome! 登录成功 "));
             ClientPushUtil.writeToClient(ctx,result,loginEvent.from.userId);
 
@@ -51,7 +51,7 @@ public class LoginEventHandler extends IMEventHandler {
         }else{
             //非法连接请求
             //关闭连接
-            ResultMsg result = new ResultMsg(200,"登录失败!");
+            EndpointMsg result = new EndpointMsg(200,"登录失败!");
             ctx.writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(result))).addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {

@@ -8,7 +8,7 @@ import com.youhaoxi.livelink.gateway.common.util.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.StatsEvent;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.im.msg.User;
 import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,7 +27,7 @@ public class StatsEventHandler extends IMEventHandler{
         StatsEvent msgEvent = (StatsEvent)msg;
         HashMap map = new HashMap();
         Integer action = msgEvent.getAction();
-        ResultMsg resultMsg = new ResultMsg(0,"成功");
+        EndpointMsg resultMsg = new EndpointMsg(0,"成功");
         //查询这个用户的相关数据
         if(action!=null&&action.intValue()==1){
             Integer userId = msgEvent.getqUserId();

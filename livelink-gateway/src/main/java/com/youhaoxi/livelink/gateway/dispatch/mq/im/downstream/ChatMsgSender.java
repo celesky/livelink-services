@@ -3,7 +3,7 @@ package com.youhaoxi.livelink.gateway.dispatch.mq.im.downstream;
 import com.alibaba.fastjson.JSON;
 import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
 import com.youhaoxi.livelink.gateway.dispatch.mq.Processor;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ public class ChatMsgSender implements Processor {
 
             String message = new String(body, "UTF-8");
             logger.info("EndpointSender 下发消息:"+message);
-            ResultMsg rmsg = JSON.parseObject(message,ResultMsg.class);
+            EndpointMsg rmsg = JSON.parseObject(message,EndpointMsg.class);
             //下发给dest用户
             ClientPushUtil.writeToClient(rmsg);
 
@@ -34,7 +34,7 @@ public class ChatMsgSender implements Processor {
     public static void main(String[] args) {
         String s = " {\"code\":10,\"dest\":{\"userId\":111},\"from\":{\"img\":\"asdfas\",\"name\":\"xdsfa\",\"userId\":222},\"msg\":\"hello myname is zhoujielun\"}\n";
 
-        ResultMsg rmsg = JSON.parseObject(s,ResultMsg.class);
+        EndpointMsg rmsg = JSON.parseObject(s,EndpointMsg.class);
 
         System.out.println(rmsg);
     }

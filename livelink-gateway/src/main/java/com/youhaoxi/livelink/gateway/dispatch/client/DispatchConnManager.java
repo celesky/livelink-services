@@ -61,4 +61,18 @@ public class DispatchConnManager {
         dispConnList.remove(ctx);
     }
 
+    /**
+     * 获取一个连接
+     * @return
+     */
+    public static ChannelHandlerContext getOneConnRamdom(){
+        ChannelHandlerContext ctx =  dispConnList.get(0);
+        if(ctx!=null&&ctx.channel().isOpen()&&ctx.channel().isActive()){
+            return ctx;
+        }else{
+            //todo  重新获取一个
+            return ctx;
+        }
+    }
+
 }

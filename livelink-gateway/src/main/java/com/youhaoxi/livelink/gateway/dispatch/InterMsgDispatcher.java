@@ -1,7 +1,6 @@
 package com.youhaoxi.livelink.gateway.dispatch;
 
 import com.youhaoxi.livelink.gateway.im.msg.InterMsg;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 
 /*
     内部消息派发

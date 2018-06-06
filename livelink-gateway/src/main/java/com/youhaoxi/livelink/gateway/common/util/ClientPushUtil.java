@@ -1,7 +1,7 @@
 package com.youhaoxi.livelink.gateway.common.util;
 
 import com.alibaba.fastjson.JSON;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -12,7 +12,7 @@ public class ClientPushUtil {
     private static final Logger logger = LoggerFactory.getLogger(ClientPushUtil.class);
 
 
-    public static void writeToClient(ResultMsg rmsg){
+    public static void writeToClient(EndpointMsg rmsg){
         Integer userId = rmsg.getDest().getUserId();
         if(userId==null){
             logger.info("writeToClient userId:{}为空,msg:{}",userId,rmsg);
@@ -59,7 +59,7 @@ public class ClientPushUtil {
         }
     }
 
-    public static void writeToClient(ChannelHandlerContext ctx, ResultMsg resultBean, Integer userId){
+    public static void writeToClient(ChannelHandlerContext ctx, EndpointMsg resultBean, Integer userId){
         String json = JSON.toJSONString(resultBean);
         if(ctx==null){
             logger.info("writeToClient userId:{} ctx为空,msg:{}",userId,json);

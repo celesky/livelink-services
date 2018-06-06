@@ -6,7 +6,7 @@ import com.youhaoxi.livelink.gateway.common.util.ClientPushUtil;
 import com.youhaoxi.livelink.gateway.dispatch.IWorker;
 import com.youhaoxi.livelink.gateway.im.event.IMsgEvent;
 import com.youhaoxi.livelink.gateway.im.event.TestEvent;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.im.msg.User;
 import com.youhaoxi.livelink.gateway.server.util.ConnectionManager;
 import io.netty.channel.ChannelHandlerContext;
@@ -46,7 +46,7 @@ public class TestEventHandler extends IMEventHandler{
             userId = msgEvent.getUserId();
             logger.info("threadId:{} , execute  userId:{} 首次登录成功",Thread.currentThread().getId(),userId);
             ctx.channel().attr(AK_USER_ID).set(userId);
-            ResultMsg result = new ResultMsg(100,userId+"首次登录成功");
+            EndpointMsg result = new EndpointMsg(100,userId+"首次登录成功");
             //添加到连接管理容器,并设置userId属性到Channel
             ConnectionManager.addConnection(userId,ctx);
             //userId 和host主机映射关系 添加到redis
@@ -57,7 +57,7 @@ public class TestEventHandler extends IMEventHandler{
         }
 
         //再通过整个链路发一条消息给自己
-        ResultMsg rmsg = new ResultMsg(10,msgEvent.msgContent);
+        EndpointMsg rmsg = new EndpointMsg(10,msgEvent.msgContent);
         rmsg.setFrom(msgEvent.getFrom());
         rmsg.setDest(new User()
                 .setUserId(userId));

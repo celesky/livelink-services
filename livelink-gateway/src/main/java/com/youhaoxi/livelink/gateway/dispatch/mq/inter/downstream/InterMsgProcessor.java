@@ -7,8 +7,8 @@ import com.youhaoxi.livelink.gateway.common.Constants;
 import com.youhaoxi.livelink.gateway.common.util.StringUtils;
 import com.youhaoxi.livelink.gateway.dispatch.mq.Processor;
 import com.youhaoxi.livelink.gateway.im.enums.InterMsgType;
+import com.youhaoxi.livelink.gateway.im.msg.EndpointMsg;
 import com.youhaoxi.livelink.gateway.im.msg.InterMsg;
-import com.youhaoxi.livelink.gateway.im.msg.ResultMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +99,7 @@ public class InterMsgProcessor implements Processor {
     public static void main(String[] args) {
         String s = " {\"code\":10,\"dest\":{\"userId\":111},\"from\":{\"img\":\"asdfas\",\"name\":\"xdsfa\",\"userId\":222},\"msg\":\"hello myname is zhoujielun\"}\n";
 
-        ResultMsg rmsg = JSON.parseObject(s,ResultMsg.class);
+        EndpointMsg rmsg = JSON.parseObject(s,EndpointMsg.class);
 
         System.out.println(rmsg);
     }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 /**
  * 下发的消息协议
  */
-public class ResultMsg {
+public class EndpointMsg {
     private Integer code;
     private String msg;
     public User from;
@@ -16,10 +16,10 @@ public class ResultMsg {
 
     private HashMap statsMap;//用于运行监测数据返回
 
-    public ResultMsg(){
+    public EndpointMsg(){
 
     }
-    public ResultMsg(Integer code, String msg) {
+    public EndpointMsg(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
     }
@@ -28,7 +28,7 @@ public class ResultMsg {
         return code;
     }
 
-    public ResultMsg setCode(Integer code) {
+    public EndpointMsg setCode(Integer code) {
         this.code = code;
         return this;
     }
@@ -37,7 +37,7 @@ public class ResultMsg {
         return msg;
     }
 
-    public ResultMsg setMsg(String msg) {
+    public EndpointMsg setMsg(String msg) {
         this.msg = msg;
         return this;
     }
@@ -46,7 +46,7 @@ public class ResultMsg {
         return from;
     }
 
-    public ResultMsg setFrom(User from) {
+    public EndpointMsg setFrom(User from) {
         this.from = from;
         return this;
     }
@@ -55,7 +55,7 @@ public class ResultMsg {
         return dest;
     }
 
-    public ResultMsg setDest(User dest) {
+    public EndpointMsg setDest(User dest) {
         this.dest = dest;
         return this;
     }
@@ -64,7 +64,7 @@ public class ResultMsg {
         return info;
     }
 
-    public ResultMsg setInfo(Info info) {
+    public EndpointMsg setInfo(Info info) {
         this.info = info;
         return this;
     }
@@ -73,7 +73,7 @@ public class ResultMsg {
         return roomId;
     }
 
-    public ResultMsg setRoomId(String roomId) {
+    public EndpointMsg setRoomId(String roomId) {
         this.roomId = roomId;
         return this;
     }
@@ -128,7 +128,7 @@ public class ResultMsg {
         return timestamp;
     }
 
-    public ResultMsg setTimestamp(Long timestamp) {
+    public EndpointMsg setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
         return this;
     }
@@ -137,7 +137,7 @@ public class ResultMsg {
         return statsMap;
     }
 
-    public ResultMsg setStatsMap(HashMap statsMap) {
+    public EndpointMsg setStatsMap(HashMap statsMap) {
         this.statsMap = statsMap;
         return this;
     }

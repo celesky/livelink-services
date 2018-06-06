@@ -1,7 +1,7 @@
 syntax = "proto2";
-package com.youhaoxi.livelink.protocol.protobuf.demo;
-option java_package = "com.youhaoxi.livelink.protocol.protobuf.demo";
-option java_outer_classname = "DataInfo";
+package com.youhaoxi.livelink.protocol.protobuf.internal;
+option java_package = "com.youhaoxi.livelink.protocol.protobuf.internal";
+option java_outer_classname = "ProtoData";
 
 message Datas{
     enum DataType {
