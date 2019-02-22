@@ -57,7 +57,6 @@ public class RabbitConsumer {
     }
 
 
-
     public static void main(String[] argv) throws Exception {
         String host = NetUtils.getLocalAddress().getHostAddress();
         //new RabbitConsumer().consume(host);
